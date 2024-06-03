@@ -1,0 +1,15 @@
+.list-wrap {
+  display: flex;
+  gap: 2%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin: 50px;
+}
+
+@media screen and (max-width: 768px) {
+  .list-wrap {
+    margin: 20px;
+  }
+}
