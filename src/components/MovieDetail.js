@@ -7,7 +7,6 @@ const MovieDetail = ({ movieList }) => {
   const { id } = useParams();
   const numberId = Number(id);
   const item = movieList.find((data) => data.id === numberId);
-  console.log(item);
 
   if (!item) {
     return <div>영화를 찾을 수 없습니다.</div>;
