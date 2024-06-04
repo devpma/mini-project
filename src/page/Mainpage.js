@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import instance from "../api/axios";
 import MovieCard from "../components/MovieCard";
 import requests from "../api/request";
-import NavBar from "../components/NavBar";
 
 function MainPage() {
   const [movies, setMovies] = useState([]);
@@ -21,7 +20,6 @@ function MainPage() {
   }, [fetchMovieData]);
   return (
     <>
-      <NavBar />
       <div className="list-wrap">
         {movies.map((movie) => (
           <MovieCard

@@ -1,11 +1,9 @@
 import React from "react";
-import NavBar from "../components/NavBar";
 import "./Login.css";
 
 const Login = () => {
   return (
     <>
-      <NavBar />
       <div className="input-wrap login-wrap">
         <h1>Login</h1>
         <input
@@ -20,6 +18,9 @@ const Login = () => {
           placeholder="비밀번호를 입력하세요."
           required
         />
+        <div className="btn-wrap">
+          <button>로그인</button>
+        </div>
       </div>
     </>
   );

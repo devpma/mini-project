@@ -26,15 +26,21 @@ const MovieDetail = () => {
   }
   return (
     <div className="detail-box">
-      <img
-        src={`${imgBasePath}${movieDetail.poster_path}`}
-        alt={movieDetail.title}
-      />
+      <div className="detail-img">
+        <img
+          src={`${imgBasePath}${movieDetail.poster_path}`}
+          alt={movieDetail.title}
+        />
+      </div>
       <div className="info">
         <h1>{movieDetail.title}</h1>
-        <p>⭐️ {movieDetail.vote_average}</p>
-        <p>{movieDetail.genres.map((data) => data.name).join(" / ")}</p>
-        <p>{movieDetail.overview}</p>
+        <p class="detail-score">⭐️ {movieDetail.vote_average}</p>
+        <p className="detail-genres">
+          {movieDetail.genres.map((data) => (
+            <span>{data.name}</span>
+          ))}
+        </p>
+        <p className="detail-overview">{movieDetail.overview}</p>
       </div>
     </div>
   );

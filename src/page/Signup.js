@@ -1,11 +1,9 @@
 import React from "react";
-import NavBar from "../components/NavBar";
 import "./Signup.css";
 
 const Signup = () => {
   return (
     <>
-      <NavBar />
       <div className="input-wrap join-wrap">
         <h1>Signup</h1>
         <input
@@ -35,7 +33,7 @@ const Signup = () => {
         <input
           type="text"
           className="input"
-          placeholder="생년월일을 입력하세요. (1990909)"
+          placeholder="생년월일을 입력하세요. (19900101)"
           required
         />
         <div className="btn-wrap">

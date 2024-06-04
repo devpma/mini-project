@@ -1,3 +1,17 @@
+@import url("//fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
+@import url("//fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Noto+Sans+KR:wght@100..900&display=swap");
+
+* {
+  margin: 0;
+  font-family: "Lato", "Noto Sans KR", sans-serif;
+  letter-spacing: -0.5px;
+  word-break: keep-all;
+}
+
+img {
+  max-width: 100%;
+}
+
 .list-wrap {
   display: flex;
   gap: 2%;

@@ -1,15 +1,68 @@
 .detail-box {
   padding: 50px;
   box-sizing: border-box;
-  background: #eee;
   display: flex;
 }
 
-.detail-box img {
+.detail-box .detail-img {
   width: 50%;
+  transition: all 0.7s;
+  animation: slideinright 0.7s;
 }
+
 .detail-box .info {
   width: 50%;
   padding: 30px;
+  padding-left: 80px;
   box-sizing: border-box;
+  transition: all 0.7s;
+  animation: slideinleft 0.7s;
+}
+
+.detail-box .info h1 {
+  margin-bottom: 1rem;
+}
+
+.detail-box .info p + p {
+  margin-top: 2rem;
+}
+
+.detail-box .info .detail-genres {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.detail-box .info .detail-genres span:before {
+  content: "#";
+}
+
+.detail-box .info .detail-genres span + span {
+  margin-left: 0.5rem;
+}
+
+.detail-box .info .detail-overview {
+  line-height: 2;
+}
+
+@keyframes slideinright {
+  from {
+    opacity: 0;
+    transform: translateX(-10%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+@keyframes slideinleft {
+  from {
+    opacity: 0;
+    transform: translateX(10%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
 }
