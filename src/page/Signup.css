@@ -1,0 +1,17 @@
+.input-wrap .btn-wrap {
+  width: 350px;
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.input-wrap .btn-wrap button {
+  height: 50px;
+  color: #fff;
+  background: #000;
+  border-radius: 5px;
+  text-align: center;
+  border: none;
+  width: 50%;
+  cursor: pointer;
+  vertical-align: middle;
+}

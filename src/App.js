@@ -1,42 +1,18 @@
 import "./App.css";
-import { Router, Route, Routes } from "react-router-dom";
-
-import MovieCard from "./components/MovieCard";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import MovieDetail from "./components/MovieDetail";
-
-import movieListData from "./mockData/mockData.json";
-import movieDetailData from "./mockData/movieDetailData.json";
-import { useEffect, useState } from "react";
+import MainPage from "./page/Mainpage";
+import Signup from "./page/Signup";
+import Login from "./page/Login";
 
 function App() {
-  const [movie, setMovie] = useState([]);
-  const [movieDetail, setMovieDetail] = useState({});
-
-  useEffect(() => {
-    setMovie(movieListData.results);
-    setMovieDetail(movieDetailData);
-  }, []);
-
   return (
     <div className="App">
       <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="list-wrap">
-              {movie.map((item) => (
-                <MovieCard
-                  key={item.id}
-                  id={item.id}
-                  img={item.poster_path}
-                  title={item.title}
-                  score={item.vote_average}
-                />
-              ))}
-            </div>
-          }
-        />
-        <Route path="/:id" element={<MovieDetail movieList={movieDetail} />} />
+        <Route path="/" element={<MainPage />} />
+        <Route path="/:id" element={<MovieDetail />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/Signup" element={<Signup />} />
       </Routes>
     </div>
   );

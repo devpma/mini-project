@@ -1,24 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { imgBasePath } from "./constant";
 import "./MovieDetail.css";
+import instance from "../api/axios";
 
-const MovieDetail = ({ movieList }) => {
-  const { id } = useParams();
-  const numberId = Number(id);
-  const item = movieList.find((data) => data.id === numberId);
+const MovieDetail = () => {
+  const { id } = useParams(); // useParams 훅을 사용하여 movieId 추출
+  const [movieDetail, setMovieDetail] = useState(null);
 
-  if (!item) {
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await instance.get(`/movie/${id}`);
+        setMovieDetail(response.data);
+      } catch (error) {
+        console.error("Error fetching movie data:", error);
+      }
+    }
+
+    fetchData(); // fetchData 함수 호출
+  }, [id]); // id가 변경될 때마다 useEffect 실행
+
+  if (!movieDetail) {
     return <div>영화를 찾을 수 없습니다.</div>;
   }
   return (
     <div className="detail-box">
-      <img src={`${imgBasePath}${item.poster_path}`} alt={item.title} />
+      <img
+        src={`${imgBasePath}${movieDetail.poster_path}`}
+        alt={movieDetail.title}
+      />
       <div className="info">
-        <h1>{item.title}</h1>
-        <p>⭐️ {item.vote_average}</p>
-        <p>{item.genres.map((data) => data.name).join(" / ")}</p>
-        <p>{item.overview}</p>
+        <h1>{movieDetail.title}</h1>
+        <p>⭐️ {movieDetail.vote_average}</p>
+        <p>{movieDetail.genres.map((data) => data.name).join(" / ")}</p>
+        <p>{movieDetail.overview}</p>
       </div>
     </div>
   );
