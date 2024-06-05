@@ -1,7 +1,6 @@
 .input-wrap {
   display: flex;
   justify-content: center;
-  align-items: center;
   height: calc(100vh - 84.5px);
   flex-direction: column;
   width: 350px;
@@ -11,6 +10,7 @@
 .input-wrap h1 {
   margin-bottom: 2rem;
   font-size: 3rem;
+  text-align: center;
 }
 
 .input-wrap input {
@@ -53,4 +53,16 @@
   background: #fff;
   color: #333;
   border: 1px solid #333;
+}
+
+.form-btm-txt {
+  font-size: 0.8rem;
+  position: relative;
+  margin-top: 1rem;
+}
+.form-btm-txt a {
+  position: absolute;
+  right: 0%;
+  top: 0;
+  border-bottom: 1px solid #333;
 }

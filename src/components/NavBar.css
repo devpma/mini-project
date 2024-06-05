@@ -2,16 +2,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #fff;
   border-bottom: 1px solid #eee;
   padding: 1.5rem;
   position: sticky;
   inset: 0;
   z-index: 10;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
 }
 
 .navbar-logo a {
-  color: #fff;
+  color: #333;
   text-decoration: none;
   font-size: 2rem;
 }
@@ -23,15 +23,20 @@
   margin: 0;
 }
 
+.navbar-links .btn-signup {
+  background: #eee;
+  padding: 10px 15px;
+  border-radius: 27px;
+}
+
 .navbar-links button {
   margin-left: 1rem;
 }
 
 .navbar-links a,
 .navbar-links button {
-  color: #333;
   text-decoration: none;
-  background: none;
+  background: inherit;
   border: none;
   cursor: pointer;
   font-size: 0.9rem;
@@ -46,12 +51,114 @@
 
 .search-wrap input {
   width: 250px;
-  border: 1px solid #888;
+  border: none;
+  border-bottom: 1px solid #888;
   outline: none;
   height: 40px;
   padding: 0 10px;
   box-sizing: border-box;
-  border-radius: 5px;
   background: url("../images/icon-search.png") no-repeat calc(100% - 10px) 50%;
   background-size: auto 28px;
+}
+
+.nav-btn {
+  width: 30px;
+  height: 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  display: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+}
+.nav-btn span {
+  border: 1px solid #333;
+  display: block;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.active .nav-btn span:nth-of-type(1) {
+  transform: rotate(45deg);
+  top: 10px;
+}
+.active .nav-btn span:nth-of-type(2) {
+  display: none;
+}
+.active .nav-btn span:nth-of-type(3) {
+  transform: rotate(136deg);
+  top: -7px;
+}
+
+.nav-menu {
+  position: fixed;
+  right: -100%;
+  top: 0;
+  height: 100%;
+  overflow-y: auto;
+  background: #fff;
+  width: 50vw;
+  padding: 30px;
+  padding-top: 6rem;
+  box-sizing: border-box;
+  border-left: 1px solid #eee;
+  display: none;
+  transition: all 0.2s;
+  min-width: 320px;
+}
+.active .nav-menu {
+  right: 0;
+}
+.nav-menu .menu li {
+  position: relative;
+  font-size: 1.5rem;
+}
+.nav-menu .menu li + li {
+  margin-top: 1.5rem;
+}
+.nav-menu .menu li a {
+  display: block;
+}
+.nav-menu .menu li a:after {
+  content: "";
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA3QAAAN0BcFOiBwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAACySURBVFiF7dW7DQIxEIThfwjvKIEOCGkAiQToB3oiIiPjWQDdIJENyZEY60jwbYBXcmRL80ler2WbyBqFpldABVRAaYCkraS9pHEIALgDK+Agqc2esF10AUvgCVyB9mO/NOAbYhBAgrgAzeCABHF+IwYFJIgT0AjYAIuf939/TYEJsAsfROFX8D9NSOQzJHIQ9YUXBwDzLvyWC7dd/DecAUdgbfuRO6BOGlbhg6gCKqACXuBWvwe2mUtCAAAAAElFTkSuQmCC);
+  background-size: cover;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: all 0.2s;
+}
+.nav-menu .menu li:hover a:after {
+  right: 10px;
+}
+
+.nav-menu .search-wrap {
+  position: static;
+  margin-left: 0;
+  margin-top: 2rem;
+}
+@media screen and (max-width: 768px) {
+  .navbar-logo a {
+    font-size: 1.5rem;
+  }
+
+  .nav-btn {
+    display: flex;
+  }
+  .navbar-links button {
+    display: none;
+  }
+  .nav-menu {
+    display: block;
+  }
+  .search-wrap {
+    display: none;
+  }
+  .nav-menu .search-wrap {
+    display: block;
+  }
 }

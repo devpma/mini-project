@@ -1,0 +1,21 @@
+.visual-wrap .swiper-pagination-progressbar {
+  top: inherit;
+  bottom: 0;
+  width: calc(100% - 40px);
+  left: 20px;
+  background: #eee;
+}
+
+.visual-wrap
+  .swiper-pagination-progressbar
+  .swiper-pagination-progressbar-fill {
+  background: #333;
+}
+
+.visual-wrap.swiper-horizontal {
+  padding: 20px;
+}
+
+.visual-wrap.swiper-horizontal img {
+  cursor: pointer;
+}

@@ -22,7 +22,12 @@ const MovieDetail = () => {
   }, [id]); // id가 변경될 때마다 useEffect 실행
 
   if (!movieDetail) {
-    return <div>영화를 찾을 수 없습니다.</div>;
+    return (
+      <div className="no-data">
+        <span className="loader"></span>
+        <div>영화를 찾을 수 없습니다.</div>
+      </div>
+    );
   }
   return (
     <div className="detail-box">
@@ -34,10 +39,10 @@ const MovieDetail = () => {
       </div>
       <div className="info">
         <h1>{movieDetail.title}</h1>
-        <p class="detail-score">⭐️ {movieDetail.vote_average}</p>
+        <p className="detail-score">⭐️ {movieDetail.vote_average}</p>
         <p className="detail-genres">
           {movieDetail.genres.map((data) => (
-            <span>{data.name}</span>
+            <span key={data.id}>{data.name}</span>
           ))}
         </p>
         <p className="detail-overview">{movieDetail.overview}</p>

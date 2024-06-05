@@ -10,16 +10,19 @@
 .list-box:hover img {
   transform: scale(1.1);
 }
+.list-box .img {
+  border-radius: 16px;
+  overflow: hidden;
+}
 .list-box p {
   margin: 0;
 }
 .title {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 700;
-  padding: 1.5rem 0 0.5rem;
+  padding: 1rem 0 0.5rem;
 }
 .score {
-  text-align: right;
   font-size: 0.8rem;
 }
 
@@ -41,6 +44,6 @@
 
 @media screen and (max-width: 768px) {
   .list-box {
-    width: 33.3%;
+    width: calc(50% - 10px);
   }
 }

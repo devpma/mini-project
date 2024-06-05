@@ -1,0 +1,8 @@
+.alert {
+  font-size: 0.8rem;
+  color: #ff4343;
+  margin-top: 0.5rem;
+}
+.alert + input {
+  margin-top: 1rem;
+}

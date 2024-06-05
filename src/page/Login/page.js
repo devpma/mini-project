@@ -1,10 +1,10 @@
 import React from "react";
-import "./Login.css";
+import "./style.css";
 
 const Login = () => {
   return (
     <>
-      <div className="input-wrap login-wrap">
+      <form className="input-wrap login-wrap">
         <h1>Login</h1>
         <input
           type="text"
@@ -21,7 +21,10 @@ const Login = () => {
         <div className="btn-wrap">
           <button>로그인</button>
         </div>
-      </div>
+        <p className="form-btm-txt">
+          아직 회원이 아니신가요? <a href="/Signup">회원가입하기</a>
+        </p>
+      </form>
     </>
   );
 };

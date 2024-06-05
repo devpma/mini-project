@@ -66,3 +66,29 @@
     transform: translateX(0%);
   }
 }
+@media screen and (max-width: 860px) {
+  .detail-box .info {
+    padding-left: 30px;
+  }
+  .detail-box .detail-img,
+  .detail-box .detail-info {
+    flex: 1;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .detail-box {
+    padding: 20px;
+    flex-direction: column;
+  }
+  .detail-box .info {
+    padding: 0;
+    padding-top: 2rem;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .detail-box .info h1 {
+    font-size: 1.5rem;
+  }
+}
