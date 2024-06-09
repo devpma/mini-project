@@ -1,14 +1,6 @@
 @import url("//fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
 @import url("//fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Noto+Sans+KR:wght@100..900&display=swap");
 
-*[data-theme="light"] {
-  --colors-primary: #000;
-  --colors-background: #fff;
-}
-*[data-theme="dark"] {
-  --colors-primary: #fff;
-  --colors-background: #000;
-}
 * {
   margin: 0;
   font-family: "Lato", "Noto Sans KR", sans-serif;
@@ -16,8 +8,13 @@
   word-break: keep-all;
   padding: 0;
 }
+body {
+  min-width: 320px;
+  max-width: 1920px;
+}
 a {
   text-decoration: none;
+  color: #333;
 }
 img {
   max-width: 100%;
@@ -68,12 +65,12 @@ li {
 }
 .list-wrap {
   display: flex;
-  gap: 10px;
+  gap: 2.5%;
   box-sizing: border-box;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: flex-start;
   margin: 50px;
+  justify-content: flex-start;
 }
 
 @media screen and (max-width: 768px) {

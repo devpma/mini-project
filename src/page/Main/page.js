@@ -64,8 +64,8 @@ function MainPage() {
         }}
         className="visual-wrap"
       >
-        {visualMovies?.map((visual) => (
-          <SwiperSlide>
+        {visualMovies?.map((visual, index) => (
+          <SwiperSlide key={index}>
             <MovieVisual
               key={visual.id}
               id={visual.id}

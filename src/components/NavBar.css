@@ -4,6 +4,7 @@
   align-items: center;
   border-bottom: 1px solid #eee;
   padding: 1.5rem;
+  background: #fff;
   position: sticky;
   inset: 0;
   z-index: 10;
@@ -57,8 +58,44 @@
   height: 40px;
   padding: 0 10px;
   box-sizing: border-box;
-  background: url("../images/icon-search.png") no-repeat calc(100% - 10px) 50%;
+  background: url("/public/images/icon-search.png") no-repeat calc(100% - 10px)
+    50%;
   background-size: auto 28px;
+}
+
+.logged-in {
+  position: relative;
+  z-index: 1;
+  margin-left: 1rem;
+}
+
+.logged-in .user-icon {
+  font-size: 0;
+}
+.logged-in-dropdown {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #eee;
+  line-height: 2;
+  min-width: max-content;
+  right: 0;
+  bottom: -80px;
+  text-align: center;
+  padding: 5px 20px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.logged-in-dropdown button {
+  margin: 0;
+  display: block;
+  line-height: 2;
+}
+
+.logged-in:hover .logged-in-dropdown {
+  opacity: 1;
 }
 
 .nav-btn {
@@ -110,9 +147,18 @@
 .active .nav-menu {
   right: 0;
 }
-.nav-menu .menu li {
+.nav-menu .menu li,
+.nav-menu .menu li button {
   position: relative;
   font-size: 1.5rem;
+}
+.nav-menu .menu li button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  text-align: left;
 }
 .nav-menu .menu li + li {
   margin-top: 1.5rem;
@@ -160,5 +206,8 @@
   }
   .nav-menu .search-wrap {
     display: block;
+  }
+  .logged-in {
+    display: none;
   }
 }

@@ -1,12 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./NavBar.css";
+import { getAuth, signOut } from "firebase/auth";
+import { app } from "../firebase"; // firebase.js에서 auth를 가져옵니다
+import { useAuth } from "./AuthContext"; // AuthContext 경로를 맞게 수정
 
-const NavBar = () => {
+const NavBar = ({ handleDarkMode }) => {
+  const auth = getAuth(app);
+  const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [menuSearch, setMenuSearch] = useState("");
   const [isActive, setIsActive] = useState(false);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const handleSearch = (e) => {
     const value = e.target.value;
@@ -33,6 +39,15 @@ const NavBar = () => {
     setIsActive(!isActive);
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <nav className={`navbar ${isActive ? "active" : ""}`}>
       <div className="navbar-logo">
@@ -47,15 +62,30 @@ const NavBar = () => {
         />
       </div>
       <div className="navbar-links">
-        <ThemeToggler />
-        <button>
-          <Link to="/login">LOGIN</Link>
-        </button>
-        <button>
-          <Link to="/Signup" className="btn-signup">
-            SIGN UP
-          </Link>
-        </button>
+        {!user ? (
+          <>
+            <button>
+              <Link to="/login">LOGIN</Link>
+            </button>
+            <button>
+              <Link to="/signup" className="btn-signup">
+                SIGN UP
+              </Link>
+            </button>
+          </>
+        ) : (
+          <div className="logged-in">
+            <p className="user-icon">
+              <img src="/images/icon-user.png" alt="user icon" />
+            </p>
+            <div className="logged-in-dropdown">
+              <button onClick={handleLogout}>SIGN OUT</button>
+              <button>
+                <Link to="/wishlist">WISH LIST</Link>
+              </button>
+            </div>
+          </div>
+        )}
         <div className="nav-btn" onClick={handleMenuClick}>
           <span></span>
           <span></span>
@@ -63,14 +93,27 @@ const NavBar = () => {
         </div>
       </div>
       <div className="nav-menu">
-        <ul className="menu">
-          <li>
-            <Link to="/login">LOGIN</Link>
-          </li>
-          <li>
-            <Link to="/Signup">SIGNUP</Link>
-          </li>
-        </ul>
+        {!user ? (
+          <ul className="menu">
+            <li>
+              <Link to="/login">LOGIN</Link>
+            </li>
+            <li>
+              <Link to="/signup">SIGNUP</Link>
+            </li>
+          </ul>
+        ) : (
+          <ul className="menu">
+            <li>
+              <button onClick={handleLogout}>SIGN OUT</button>
+            </li>
+            <li>
+              <button>
+                <Link to="/wishlist">WISH LIST</Link>
+              </button>
+            </li>
+          </ul>
+        )}
         <div className="search-wrap">
           <input
             type="text"
@@ -81,24 +124,6 @@ const NavBar = () => {
         </div>
       </div>
     </nav>
-  );
-};
-
-const ThemeToggler = () => {
-  const [theme, setTheme] = useState("light");
-
-  useEffect(() => {
-    document.body.dataset.theme = theme;
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
-
-  return (
-    <button onClick={toggleTheme}>
-      {theme === "light" ? "다크 모드" : "라이트 모드"}
-    </button>
   );
 };
 

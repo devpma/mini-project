@@ -12,10 +12,15 @@
 }
 .list-box .img {
   border-radius: 16px;
+  font-size: 0;
   overflow: hidden;
 }
 .list-box p {
   margin: 0;
+}
+.info {
+  position: relative;
+  z-index: 1;
 }
 .title {
   font-size: 1rem;
@@ -25,17 +30,26 @@
 .score {
   font-size: 0.8rem;
 }
+.wish {
+  position: absolute;
+  right: 10px;
+  top: -40px;
+  font-size: 22px;
+  cursor: pointer;
+  background: transparent;
+  outline: none;
+  border: none;
+}
 
 @media screen and (max-width: 1200px) {
   .list-box {
-    width: 20%;
     margin-bottom: 30px;
   }
 }
 
 @media screen and (max-width: 860px) {
   .list-box {
-    width: 25%;
+    width: 23%;
   }
   .title {
     font-size: 1rem;
