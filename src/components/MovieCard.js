@@ -88,8 +88,10 @@ const MovieCard = ({ id, title, score, img }) => {
   const handleOnWishlist = async () => {
     if (isWish) {
       await removeFromWishlist();
-    } else {
+    } else if (user && !isWish) {
       await addToWishlist();
+    } else {
+      alert("로그인이 필요합니다.");
     }
     // 상태 변경 후의 상태 확인
     setTimeout(() => {}, 500);
@@ -107,14 +109,13 @@ const MovieCard = ({ id, title, score, img }) => {
       <div className="info">
         <p className="title">{title}</p>
         <p className="score">⭐️ {score}</p>
-        {user && (
-          <button
-            className={`wish ${isWish ? "liked" : "unliked"}`}
-            onClick={handleOnWishlist}
-          >
-            {isWish === null ? "⌛" : isWish ? "🩷" : "🤍"}
-          </button>
-        )}
+
+        <button
+          className={`wish ${isWish ? "liked" : "unliked"}`}
+          onClick={handleOnWishlist}
+        >
+          {isWish === null ? "⌛" : isWish ? "🩷" : "🤍"}
+        </button>
       </div>
     </div>
   );
