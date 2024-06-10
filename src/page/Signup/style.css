@@ -11,29 +11,3 @@
   text-align: center;
   margin: 50px auto;
 }
-
-.sns-login {
-  display: flex;
-  font-size: 0;
-  margin-top: 2rem;
-  justify-content: center;
-}
-
-.sns-login li button {
-  font-size: 0;
-  border: none;
-  border-radius: 100%;
-  padding: 10px;
-  background-size: 24px;
-  width: 24px;
-  height: 24px;
-  background-repeat: no-repeat;
-  background-position: 50%;
-  background-size: 24px;
-  background-color: transparent;
-  cursor: pointer;
-}
-
-.sns-login .google button {
-  background-image: url("/public/images/icon-google.png");
-}

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import "./NavBar.css";
 import { getAuth, signOut } from "firebase/auth";
 import { app } from "../firebase"; // firebase.js에서 auth를 가져옵니다
@@ -13,6 +13,15 @@ const NavBar = ({ handleDarkMode }) => {
   const [isActive, setIsActive] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { params } = useParams();
+
+  const emailCut = () => {
+    if (user.reloadUserInfo.email) {
+      const email = user.reloadUserInfo.email;
+      const username = email.split("@")[0];
+      return username;
+    }
+  };
 
   const handleSearch = (e) => {
     const value = e.target.value;
@@ -23,6 +32,12 @@ const NavBar = ({ handleDarkMode }) => {
       navigate(`/`);
     }
   };
+
+  useEffect(() => {
+    if (pathname === "/") {
+      setSearch("");
+    }
+  }, [pathname]);
 
   const handleMenuSearch = (e) => {
     const value = e.target.value;
@@ -76,7 +91,11 @@ const NavBar = ({ handleDarkMode }) => {
         ) : (
           <div className="logged-in">
             <p className="user-icon">
-              <img src="/images/icon-user.png" alt="user icon" />
+              {user && user.photoURL ? (
+                <img src={user.photoURL} alt="" />
+              ) : (
+                <p className="user-name">{emailCut()} 님 어서오세요!</p>
+              )}
             </p>
             <div className="logged-in-dropdown">
               <button onClick={handleLogout}>SIGN OUT</button>
@@ -103,16 +122,31 @@ const NavBar = ({ handleDarkMode }) => {
             </li>
           </ul>
         ) : (
-          <ul className="menu">
-            <li>
-              <button onClick={handleLogout}>SIGN OUT</button>
-            </li>
-            <li>
-              <button>
-                <Link to="/wishlist">WISH LIST</Link>
-              </button>
-            </li>
-          </ul>
+          <>
+            <p class="user-info">
+              {user && user.photoURL ? (
+                <img src={user.photoURL} alt="" />
+              ) : (
+                <>
+                  <span>
+                    <strong>{emailCut()}</strong> 님
+                  </span>
+                  <br />
+                </>
+              )}
+              어서오세요!
+            </p>
+            <ul className="menu">
+              <li>
+                <button onClick={handleLogout}>SIGN OUT</button>
+              </li>
+              <li>
+                <button>
+                  <Link to="/wishlist">WISH LIST</Link>
+                </button>
+              </li>
+            </ul>
+          </>
         )}
         <div className="search-wrap">
           <input

@@ -15,6 +15,13 @@
   font-size: 0;
   overflow: hidden;
 }
+
+.list-box .img.empty {
+  background: #eee;
+  height: 0;
+  padding-bottom: 150%;
+}
+
 .list-box p {
   margin: 0;
 }

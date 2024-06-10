@@ -46,6 +46,7 @@ li {
   display: flex;
   flex-direction: column;
   text-align: center;
+  margin: 0 auto;
 }
 @keyframes rotation {
   0% {

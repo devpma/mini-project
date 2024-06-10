@@ -71,7 +71,19 @@
 
 .logged-in .user-icon {
   font-size: 0;
+  display: flex;
+  align-items: center;
 }
+.logged-in .user-icon img {
+  max-width: 36px;
+  border-radius: 100%;
+  overflow: hidden;
+}
+.logged-in .user-icon .user-name {
+  font-size: 0.8rem;
+  margin-left: 0.8rem;
+}
+
 .logged-in-dropdown {
   position: absolute;
   background: #fff;
@@ -86,6 +98,18 @@
   flex-direction: column;
   opacity: 0;
   transition: all 0.2s;
+}
+.logged-in-dropdown:before {
+  content: "";
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  background: url(../../public/images/icon-arw.png) no-repeat 50%;
+  background-size: cover;
+  position: absolute;
+  top: -13px;
+  right: 10px;
+  z-index: 1;
 }
 
 .logged-in-dropdown button {
@@ -166,6 +190,7 @@
 .nav-menu .menu li a {
   display: block;
 }
+.nav-menu .menu li button:after,
 .nav-menu .menu li a:after {
   content: "";
   display: inline-block;
@@ -178,6 +203,7 @@
   top: 0;
   transition: all 0.2s;
 }
+.nav-menu .menu li:hover button:after,
 .nav-menu .menu li:hover a:after {
   right: 10px;
 }
@@ -187,6 +213,23 @@
   margin-left: 0;
   margin-top: 2rem;
 }
+
+.nav-menu .user-info {
+  font-size: 1rem;
+  margin-bottom: 3rem;
+}
+.nav-menu .user-info img {
+  max-width: 36px;
+  border-radius: 100%;
+  overflow: hidden;
+}
+.nav-menu .user-info span {
+  font-size: 1.5rem;
+}
+.nav-menu .user-info span span {
+  font-weight: bold;
+}
+
 @media screen and (max-width: 768px) {
   .navbar-logo a {
     font-size: 1.5rem;

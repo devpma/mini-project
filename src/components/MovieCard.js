@@ -29,6 +29,7 @@ const MovieCard = ({ id, title, score, img }) => {
         const parsedWish = JSON.parse(cachedWish); // 캐시된 데이터가 있으면 이를 파싱하여 isWish와 wishlistDocId 상태를 설정
         setIsWish(parsedWish.isWish);
         setWishlistDocId(parsedWish.wishlistDocId);
+        console.log("캐시된 데이터 사용:", parsedWish); // 로그 추가
         return; // 캐시된 데이터가 있으면 Firestore에서 데이터를 가져오지 않고 함수가 종료
       }
 
@@ -48,6 +49,7 @@ const MovieCard = ({ id, title, score, img }) => {
             `wishlist-${user.uid}-${id}`,
             JSON.stringify({ isWish: true, wishlistDocId: docId }) // 이 데이터를 로컬 저장소에 캐시
           );
+          console.log("Firestore 데이터 사용: 위시리스트에 있음"); // 로그 추가
           //해당 영화가 위시리스트에 없는 경우
         } else {
           setIsWish(false); // 해당 영화가 위시리스트에 없음을 나타내는 상태를 설정
@@ -56,6 +58,7 @@ const MovieCard = ({ id, title, score, img }) => {
             `wishlist-${user.uid}-${id}`,
             JSON.stringify({ isWish: false, wishlistDocId: null }) // 이 상태를 로컬 저장소에 캐시
           );
+          console.log("Firestore 데이터 사용: 위시리스트에 없음"); // 로그 추가
         }
       } catch (error) {
         console.error("Error fetching wishlist status:", error);
@@ -102,6 +105,7 @@ const MovieCard = ({ id, title, score, img }) => {
           JSON.stringify(cachedWishlist)
         );
         window.dispatchEvent(new Event("wishlist-update")); // "wishlist-update"라는 커스텀 이벤트를 디스패치
+        console.log("위시리스트에 추가됨:", docRef.id); // 로그 추가
       } catch (error) {
         console.error("Error adding to wishlist:", error);
         setIsWish(false); // 호출하여 추가되지 않았음을 나타내는 상태를 설정
@@ -109,7 +113,7 @@ const MovieCard = ({ id, title, score, img }) => {
     }
   };
 
-  // 사용자가 위시리스트에서 특정 영화를 제거하는 기능을 구
+  // 사용자가 위시리스트에서 특정 영화를 제거하는 기능을 구현
   const removeFromWishlist = async () => {
     if (user && wishlistDocId) {
       try {
@@ -128,6 +132,7 @@ const MovieCard = ({ id, title, score, img }) => {
           JSON.stringify(updatedWishlist)
         ); // 업데이트된 위시리스트 데이터를 JSON 문자열로 변환하여 로컬 저장소에 저장
         window.dispatchEvent(new Event("wishlist-update")); // "wishlist-update"라는 커스텀 이벤트를 디스패치 // 위시리스트가 업데이트되었음을 애플리케이션의 다른 부분에 알림
+        console.log("위시리스트에서 제거됨:", wishlistDocId); // 로그 추가
       } catch (error) {
         console.error("Error removing from wishlist:", error);
         setIsWish(true); // 삭제되지 않았음을 나타내는 상태를 설정
@@ -147,13 +152,17 @@ const MovieCard = ({ id, title, score, img }) => {
 
   return (
     <div className="list-box">
-      <div className="img">
-        <img
-          src={`${imgBasePath}${img}`}
-          alt={title}
-          onClick={() => navigate(`/${id}`)}
-        />
-      </div>
+      {img === null ? (
+        <div className="img empty"></div>
+      ) : (
+        <div className="img">
+          <img
+            src={`${imgBasePath}${img}`}
+            alt={title}
+            onClick={() => navigate(`/${id}`)}
+          />
+        </div>
+      )}
       <div className="info">
         <p className="title">{title}</p>
         <p className="score">⭐️ {score}</p>
