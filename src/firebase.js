@@ -3,12 +3,12 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC7Y0wEqaN1STIsS2vIpRBVWOTDm5FsRrE",
-  authDomain: "mini-project-3a996.firebaseapp.com",
-  projectId: "mini-project-3a996",
-  storageBucket: "mini-project-3a996.appspot.com",
-  messagingSenderId: "121661191164",
-  appId: "1:121661191164:web:e206c99685d929cbcef879",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 // Firebase 앱 초기화
