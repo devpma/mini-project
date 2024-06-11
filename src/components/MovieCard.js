@@ -90,6 +90,7 @@ const MovieCard = ({ id, title, score, img }) => {
       await removeFromWishlist();
     } else if (user && !isWish) {
       await addToWishlist();
+      alert("위시리스트에 추가되었습니다.");
     } else {
       alert("로그인이 필요합니다.");
     }
