@@ -2,10 +2,12 @@ import React, { useEffect, useState, useCallback } from "react";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 import "./style.css";
+import { useNavigate } from "react-router-dom";
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
   const fetchWishlist = useCallback(async () => {
     const user = auth.currentUser;
@@ -15,10 +17,12 @@ const Wishlist = () => {
         const wishlistSnapshot = await getDocs(wishlistRef);
         const wishlistData = wishlistSnapshot.docs.map((doc) => ({
           id: doc.id,
+          movieId: doc.data().movieId, // movieId 필드를 포함
           ...doc.data(),
         }));
         setWishlistItems(wishlistData);
       } catch (error) {
+        console.error("Error fetching wishlist:", error); // 에러 핸들링 추가
       } finally {
         setLoading(false);
       }
@@ -56,7 +60,9 @@ const Wishlist = () => {
           prevItems.filter((item) => item.id !== itemId)
         );
         window.dispatchEvent(new Event("wishlist-update"));
-      } catch (error) {}
+      } catch (error) {
+        console.error("Error removing item from wishlist:", error); // 에러 핸들링 추가
+      }
     } else {
       console.log("User not authenticated");
     }
@@ -79,7 +85,10 @@ const Wishlist = () => {
             ) : (
               wishlistItems.map((item) => (
                 <li key={item.id} className="list-box">
-                  <div className="img">
+                  <div
+                    className="img"
+                    onClick={() => navigate(`/${item.movieId}`)}
+                  >
                     <img src={item.imageUrl} alt={item.name} />
                   </div>
                   <div className="info">

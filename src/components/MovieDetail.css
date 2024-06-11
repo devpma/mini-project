@@ -71,8 +71,8 @@
     padding-left: 30px;
   }
   .detail-box .detail-img,
-  .detail-box .detail-info {
-    flex: 1;
+  .detail-box .info {
+    width: 100%;
   }
 }
 
