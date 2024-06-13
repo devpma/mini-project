@@ -30,11 +30,6 @@ const Login = () => {
     });
   }, [auth, navigate]);
 
-  if (user) {
-    navigate("/"); // 로그인 된 상태라면 홈 페이지로 이동
-    return null;
-  }
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -43,12 +38,11 @@ const Login = () => {
       navigate("/"); // 로그인 성공 시 홈 페이지로 이동
     } catch (error) {
       setError("로그인에 실패했습니다. 아이디와 비밀번호를 확인하세요.");
-      console.error(error);
     }
   };
 
   const handleAuth = () => {
-    signInWithPopup(auth, provider).then((result) => {});
+    signInWithPopup(auth, provider);
   };
 
   return (
@@ -76,7 +70,7 @@ const Login = () => {
           <button type="submit">로그인</button>
         </div>
         <p className="form-btm-txt">
-          아직 회원이 아니신가요? <a href="/signup">회원가입하기</a>
+          아직 회원이 아니신가요? <Link to="/signup">회원가입하기</Link>
         </p>
         <div class="sns-login">
           <ul>

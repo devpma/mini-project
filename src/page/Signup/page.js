@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase"; // firebase.js에서 auth를 가져옴
 import "./style.css";
@@ -60,7 +60,7 @@ const Signup = () => {
         <input
           type="text"
           className="input"
-          placeholder="아이디를 입력하세요."
+          placeholder="이메일을 입력하세요."
           onChange={(e) => setUserId(e.target.value)}
           required
         />
@@ -91,7 +91,7 @@ const Signup = () => {
           onChange={(e) => setUsername(e.target.value)}
         />
         <input
-          type="number"
+          type="text"
           className="input"
           placeholder="생년월일을 입력하세요. (19900101)"
           required
@@ -104,7 +104,7 @@ const Signup = () => {
           <button type="submit">가입</button>
         </div>
         <p className="form-btm-txt">
-          이미 가입하셨나요? <a href="/login">로그인하기</a>
+          이미 가입하셨나요? <Link to="/login">로그인하기</Link>
         </p>
       </form>
     </>

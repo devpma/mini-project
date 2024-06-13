@@ -6,7 +6,6 @@
 
 .detail-box .detail-img {
   width: 50%;
-  transition: all 0.7s;
   animation: slideinright 0.7s;
 }
 
@@ -15,7 +14,6 @@
   padding: 30px;
   padding-left: 80px;
   box-sizing: border-box;
-  transition: all 0.7s;
   animation: slideinleft 0.7s;
 }
 

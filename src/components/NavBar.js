@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./NavBar.css";
 import { getAuth, signOut } from "firebase/auth";
 import { app } from "../firebase"; // firebase.js에서 auth를 가져옵니다
@@ -13,14 +13,10 @@ const NavBar = ({ handleDarkMode }) => {
   const [isActive, setIsActive] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { params } = useParams();
 
-  const emailCut = () => {
-    if (user.reloadUserInfo.email) {
-      const email = user.reloadUserInfo.email;
-      const username = email.split("@")[0];
-      return username;
-    }
+  const spliceUserEmail = (email) => {
+    const username = email.split("@")[0];
+    return username;
   };
 
   const handleSearch = (e) => {
@@ -76,34 +72,15 @@ const NavBar = ({ handleDarkMode }) => {
           placeholder="검색어를 입력하세요."
         />
       </div>
-      <div className="navbar-links">
+      <div className="navbar-links logged-in">
         {!user ? (
-          <>
-            <button>
-              <Link to="/login">LOGIN</Link>
-            </button>
-            <button>
-              <Link to="/signup" className="btn-signup">
-                SIGN UP
-              </Link>
-            </button>
-          </>
+          <NavLogged />
         ) : (
-          <div className="logged-in">
-            <p className="user-icon">
-              {user && user.photoURL ? (
-                <img src={user.photoURL} alt="" />
-              ) : (
-                <p className="user-name">{emailCut()} 님 어서오세요!</p>
-              )}
-            </p>
-            <div className="logged-in-dropdown">
-              <button onClick={handleLogout}>SIGN OUT</button>
-              <button>
-                <Link to="/wishlist">WISH LIST</Link>
-              </button>
-            </div>
-          </div>
+          <NavLogin
+            user={user}
+            spliceUserEmail={spliceUserEmail}
+            handleLogout={handleLogout}
+          />
         )}
         <div className="nav-btn" onClick={handleMenuClick}>
           <span></span>
@@ -113,40 +90,13 @@ const NavBar = ({ handleDarkMode }) => {
       </div>
       <div className="nav-menu">
         {!user ? (
-          <ul className="menu">
-            <li>
-              <Link to="/login">LOGIN</Link>
-            </li>
-            <li>
-              <Link to="/signup">SIGNUP</Link>
-            </li>
-          </ul>
+          <NavLogged />
         ) : (
-          <>
-            <p class="user-info">
-              {user && user.photoURL ? (
-                <img src={user.photoURL} alt="" />
-              ) : (
-                <>
-                  <span>
-                    <strong>{emailCut()}</strong> 님
-                  </span>
-                  <br />
-                </>
-              )}
-              어서오세요!
-            </p>
-            <ul className="menu">
-              <li>
-                <button onClick={handleLogout}>SIGN OUT</button>
-              </li>
-              <li>
-                <button>
-                  <Link to="/wishlist">WISH LIST</Link>
-                </button>
-              </li>
-            </ul>
-          </>
+          <NavLogin
+            user={user}
+            spliceUserEmail={spliceUserEmail}
+            handleLogout={handleLogout}
+          />
         )}
         <div className="search-wrap">
           <input
@@ -162,3 +112,45 @@ const NavBar = ({ handleDarkMode }) => {
 };
 
 export default NavBar;
+
+const NavLogged = () => {
+  return (
+    <ul className="menu navbar-links">
+      <li>
+        <Link to="/login">LOGIN</Link>
+      </li>
+      <li>
+        <Link to="/signup" className="btn-signup">
+          SIGNUP
+        </Link>
+      </li>
+    </ul>
+  );
+};
+
+const NavLogin = ({ user, spliceUserEmail, handleLogout }) => {
+  return (
+    <>
+      <p className="user-info">
+        {user.photoURL ? (
+          <img src={user.photoURL} alt="" />
+        ) : (
+          <>
+            <span>
+              <strong>{spliceUserEmail(user.reloadUserInfo.email)}</strong>님
+              &nbsp;
+            </span>
+            <br />
+            어서오세요!
+          </>
+        )}
+      </p>
+      <div className="logged-in-dropdown">
+        <button onClick={handleLogout}>SIGN OUT</button>
+        <button>
+          <Link to="/wishlist">WISH LIST</Link>
+        </button>
+      </div>
+    </>
+  );
+};

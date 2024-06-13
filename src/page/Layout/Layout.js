@@ -5,7 +5,7 @@ import NavBar from "../../components/NavBar";
 const Layout = ({ loginStatus, handleLoginStatus }) => {
   return (
     <>
-      <NavBar loginStatus={loginStatus} handleLoginStatus={handleLoginStatus} />
+      <NavBar />
       <main>
         <Outlet />
       </main>

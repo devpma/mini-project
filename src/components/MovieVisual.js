@@ -7,7 +7,7 @@ const MovieVisual = ({ id, title, img }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="visyal-box">
+    <div className="visual-box">
       <div className="img">
         <img
           src={`${imgBasePath}${img}`}

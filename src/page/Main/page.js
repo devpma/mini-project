@@ -17,9 +17,7 @@ function MainPage() {
     try {
       const response = await instance.get(requests.fetchMovieList);
       setMovies(response.data.results);
-    } catch (error) {
-      console.error("Error", error);
-    }
+    } catch (error) {}
   }, []);
 
   useEffect(() => {
@@ -30,9 +28,7 @@ function MainPage() {
     try {
       const response = await instance.get(requests.fetchVisualList);
       setVisualMovies(response.data.results);
-    } catch (error) {
-      console.error("Error", error);
-    }
+    } catch (error) {}
   }, []);
 
   useEffect(() => {
@@ -67,7 +63,6 @@ function MainPage() {
         {visualMovies?.map((visual, index) => (
           <SwiperSlide key={index}>
             <MovieVisual
-              key={visual.id}
               id={visual.id}
               title={visual.title}
               img={visual.poster_path}

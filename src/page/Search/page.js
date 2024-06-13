@@ -18,9 +18,7 @@ const Searchpage = ({ id, title, score, img }) => {
       const response = await axios.get(url);
 
       setSearchResults(response.data.results);
-    } catch (error) {
-      console.error(`Error fetching movie data: ${error.message}`);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {

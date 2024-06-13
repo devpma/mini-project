@@ -30,10 +30,12 @@
   border-radius: 27px;
 }
 
+.navbar-links li,
 .navbar-links button {
   margin-left: 1rem;
 }
 
+.navbar-links li,
 .navbar-links a,
 .navbar-links button {
   text-decoration: none;
@@ -42,6 +44,33 @@
   cursor: pointer;
   font-size: 0.9rem;
   padding: 0;
+}
+
+.logged-in {
+  position: relative;
+  z-index: 1;
+  margin-left: 1rem;
+}
+
+.logged-in .user-icon {
+  font-size: 0;
+  display: flex;
+  align-items: center;
+}
+.logged-in .user-icon img {
+  max-width: 36px;
+  border-radius: 100%;
+  overflow: hidden;
+}
+.logged-in .user-info {
+  font-size: 0.8rem;
+  margin-left: 0.8rem;
+}
+.logged-in .user-info br {
+  display: none;
+}
+.logged-in .user-info span {
+  display: inline-block;
 }
 
 .search-wrap {
@@ -61,27 +90,6 @@
   background: url("/public/images/icon-search.png") no-repeat calc(100% - 10px)
     50%;
   background-size: auto 28px;
-}
-
-.logged-in {
-  position: relative;
-  z-index: 1;
-  margin-left: 1rem;
-}
-
-.logged-in .user-icon {
-  font-size: 0;
-  display: flex;
-  align-items: center;
-}
-.logged-in .user-icon img {
-  max-width: 36px;
-  border-radius: 100%;
-  overflow: hidden;
-}
-.logged-in .user-icon .user-name {
-  font-size: 0.8rem;
-  margin-left: 0.8rem;
 }
 
 .logged-in-dropdown {
@@ -112,14 +120,26 @@
   z-index: 1;
 }
 
-.logged-in-dropdown button {
+.logged-in .logged-in-dropdown button,
+.logged-in .logged-in-dropdown li {
   margin: 0;
   display: block;
   line-height: 2;
 }
 
+.logged-in .logged-in-dropdown button:after,
+.logged-in .logged-in-dropdown li:after {
+  display: none;
+}
+
 .logged-in:hover .logged-in-dropdown {
   opacity: 1;
+}
+.logged-in .user-info img,
+.nav-menu .user-info img {
+  max-width: 36px;
+  border-radius: 100%;
+  overflow: hidden;
 }
 
 .nav-btn {
@@ -171,27 +191,20 @@
 .active .nav-menu {
   right: 0;
 }
-.nav-menu .menu li,
-.nav-menu .menu li button {
+
+.nav-menu .navbar-links > li {
   position: relative;
-  font-size: 1.5rem;
 }
-.nav-menu .menu li button {
-  background: none;
-  border: none;
+.nav-menu .navbar-links > li + li,
+.logged-in-dropdown button + button {
+  margin-top: 1rem;
+}
+.logged-in-dropdown button {
+  position: relative;
   cursor: pointer;
-  display: block;
-  width: 100%;
-  text-align: left;
 }
-.nav-menu .menu li + li {
-  margin-top: 1.5rem;
-}
-.nav-menu .menu li a {
-  display: block;
-}
-.nav-menu .menu li button:after,
-.nav-menu .menu li a:after {
+.logged-in-dropdown button:after,
+.nav-menu .navbar-links > li:after {
   content: "";
   display: inline-block;
   width: 26px;
@@ -203,8 +216,8 @@
   top: 0;
   transition: all 0.2s;
 }
-.nav-menu .menu li:hover button:after,
-.nav-menu .menu li:hover a:after {
+.logged-in-dropdown button:hover:after,
+.nav-menu .navbar-links > li:hover:after {
   right: 10px;
 }
 
@@ -219,9 +232,6 @@
   margin-bottom: 3rem;
 }
 .nav-menu .user-info img {
-  max-width: 36px;
-  border-radius: 100%;
-  overflow: hidden;
 }
 .nav-menu .user-info span {
   font-size: 1.5rem;
@@ -238,19 +248,56 @@
   .nav-btn {
     display: flex;
   }
-  .navbar-links button {
+  .navbar-links > li,
+  .search-wrap {
     display: none;
   }
   .nav-menu {
     display: block;
   }
-  .search-wrap {
-    display: none;
+  .nav-menu .navbar-links > li {
+    display: block;
+    margin-left: 0;
   }
+  .nav-menu .navbar-links > li + li {
+    margin-left: 0;
+  }
+  .nav-menu .navbar-links {
+    display: block;
+  }
+
+  .nav-menu .navbar-links .btn-signup {
+    background: none;
+    padding: 0;
+  }
+
   .nav-menu .search-wrap {
     display: block;
   }
-  .logged-in {
+  .logged-in .user-info {
     display: none;
+  }
+  .logged-in .user-info img {
+    max-width: 36px;
+    border-radius: 100%;
+    overflow: hidden;
+  }
+  .logged-in .logged-in-dropdown,
+  .logged-in-dropdown:before {
+    display: none;
+  }
+  .logged-in-dropdown {
+    position: static;
+    opacity: 1;
+    padding: 0;
+    border: none;
+    text-align: left;
+  }
+  .logged-in-dropdown button,
+  .nav-menu .navbar-links > li a {
+    text-align: left;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
   }
 }
