@@ -3,7 +3,7 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #9996;
-  padding: 1rem;
+  padding: 1.5rem 1rem;
   background: #000;
   position: sticky;
   inset: 0;
@@ -96,6 +96,7 @@
   box-sizing: border-box;
   background: url("/public/images/icon-search.png") no-repeat calc(100% - 10px)
     50%;
+  color: #fff;
   background-size: auto 24px;
 }
 

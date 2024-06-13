@@ -105,6 +105,7 @@ li {
   align-items: flex-start;
   margin: 50px;
   justify-content: flex-start;
+  color: #fff;
 }
 
 @media screen and (max-width: 768px) {

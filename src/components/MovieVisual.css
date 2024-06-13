@@ -58,7 +58,7 @@
   opacity: 0;
   transition: all 1s;
   position: relative;
-  bottom: -10px;
+  bottom: -50px;
 }
 
 .visual-wrap .swiper-slide-active .info strong,

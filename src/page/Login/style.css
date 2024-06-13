@@ -25,6 +25,7 @@
   box-sizing: border-box;
   outline: none;
   background: transparent;
+  color: #fff;
 }
 
 .input-wrap input + input {

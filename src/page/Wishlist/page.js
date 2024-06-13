@@ -10,6 +10,7 @@ const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate(); // useNavigate 훅 사용
+  const [isWish, setIsWish] = useState(false); // 위시리스트에 있는지 여부 상태
 
   // fetchWishlist 함수 정의 및 useCallback 훅으로 메모이제이션
   const fetchWishlist = useCallback(async () => {
@@ -82,7 +83,7 @@ const Wishlist = () => {
   // 컴포넌트 렌더링
   return (
     <div className="wishlist-wrap">
-      <h1>WISH LIST</h1>
+      <h1>MYPAGE</h1>
       {loading ? (
         // 로딩 중일 때 로딩 스피너 표시
         <div className="loading">
@@ -111,10 +112,10 @@ const Wishlist = () => {
                     <p className="title">{item.name}</p>
                     <p className="score">⭐️ {item.score}</p>
                     <button
-                      className={`wish liked`}
+                      className="wish active"
                       onClick={() => removeFromWishlist(item.id)} // 위시리스트에서 제거
                     >
-                      🩷
+                      좋아요
                     </button>
                   </div>
                 </li>

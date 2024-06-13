@@ -4,6 +4,7 @@ import "./NavBar.css";
 import { getAuth, signOut } from "firebase/auth";
 import { app } from "../firebase"; // firebase.js에서 auth를 가져옵니다
 import { useAuth } from "./AuthContext"; // AuthContext 경로를 맞게 수정
+import { collection } from "firebase/firestore";
 
 const NavBar = ({ handleDarkMode }) => {
   const auth = getAuth(app);
@@ -62,7 +63,7 @@ const NavBar = ({ handleDarkMode }) => {
   return (
     <nav className={`navbar ${isActive ? "active" : ""}`}>
       <div className="navbar-logo">
-        <Link to="/">HOME</Link>
+        <Link to="/">MOVIE</Link>
       </div>
       <div className="search-wrap">
         <input
@@ -136,7 +137,7 @@ const NavLogin = ({ user, spliceUserEmail, handleLogout }) => {
           {user.photoURL ? (
             <img src={user.photoURL} alt="profile img" />
           ) : (
-            <img src="/public/images/icon-user.png" alt="profile img" />
+            <img src="../images/icon-user.png" alt="profile img" />
           )}
         </Link>
         <span>
