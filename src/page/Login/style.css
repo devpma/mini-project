@@ -9,6 +9,7 @@
 
 .input-wrap h1 {
   margin-bottom: 2rem;
+  color: #fff;
   font-size: 3rem;
   text-align: center;
 }
@@ -23,6 +24,7 @@
   padding: 0 10px;
   box-sizing: border-box;
   outline: none;
+  background: transparent;
 }
 
 .input-wrap input + input {
@@ -59,12 +61,14 @@
   font-size: 0.8rem;
   position: relative;
   margin-top: 1rem;
+  color: #fff;
 }
 .form-btm-txt a {
   position: absolute;
   right: 0%;
   top: 0;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #fff;
+  color: #fff;
 }
 
 .sns-login {

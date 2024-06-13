@@ -12,6 +12,9 @@ import MovieVisual from "../../components/MovieVisual";
 function MainPage() {
   const [movies, setMovies] = useState();
   const [visualMovies, setVisualMovies] = useState();
+  const [parallaxSwiper, setParallaxSwiper] = useState(null);
+  const parallaxAmount = parallaxSwiper ? parallaxSwiper.width * 0.95 : 0;
+  const parallaxOpacity = 0.5;
 
   const fetchMovieData = useCallback(async () => {
     try {
@@ -28,6 +31,7 @@ function MainPage() {
     try {
       const response = await instance.get(requests.fetchVisualList);
       setVisualMovies(response.data.results);
+      console.log(response.data.results);
     } catch (error) {}
   }, []);
 
@@ -38,24 +42,28 @@ function MainPage() {
   if (!movies) {
     return <span className="loader"></span>;
   }
+  const mainSliderConfigs = {
+    containerClass: "swiper-container hero-slider",
+    parallax: true,
+    centeredSlides: true,
+    speed: 500,
+    spaceBetween: 0,
+    effect: "slide",
+  };
+
   return (
     <>
       <Swiper
+        {...mainSliderConfigs}
+        getSwiper={setParallaxSwiper}
         pagination={{
           type: "progressbar",
           clickable: true,
         }}
-        slidesPerView={3}
-        spaceBetween={30}
         modules={[Pagination]}
         breakpoints={{
           320: {
             slidesPerView: 1,
-            spaceBetween: 20,
-          },
-          640: {
-            slidesPerView: 3,
-            spaceBetween: 30,
           },
         }}
         className="visual-wrap"
@@ -65,9 +73,14 @@ function MainPage() {
             <MovieVisual
               id={visual.id}
               title={visual.title}
+              overview={visual.overview}
               img={visual.poster_path}
               score={visual.vote_average}
+              video={visual.video}
               fetchUrl={requests.fetchVisualList}
+              background={visual.backdrop_path}
+              parallaxAmount={parallaxAmount}
+              parallaxOpacity={parallaxOpacity}
             />
           </SwiperSlide>
         ))}

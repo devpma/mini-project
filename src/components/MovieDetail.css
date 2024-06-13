@@ -1,20 +1,76 @@
 .detail-box {
-  padding: 50px;
   box-sizing: border-box;
   display: flex;
+  align-items: center;
+  font-size: 0;
+  border-bottom: 1px solid #9996;
+  position: relative;
 }
 
 .detail-box .detail-img {
-  width: 50%;
+  width: 80%;
   animation: slideinright 0.7s;
+  position: relative;
+}
+.detail-box .detail-img:after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: 50%;
+  top: 0;
+  bottom: 0;
+  background: rgb(0, 0, 0);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 212, 255, 0) 100%
+  );
+}
+
+.movie-links {
+  display: flex;
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+}
+.movie-links li {
+}
+.movie-links li + li {
+  margin-left: 30px;
+}
+.movie-links .wish {
+  position: static;
+}
+.movie-links a {
+  font-size: 0;
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size: cover;
+  display: block;
+}
+.movie-links a:hover {
+  animation: hithere 1s ease infinite;
+}
+.movie-links .premovie a {
+  background-image: url("../../public/images/icon-premovie.png");
+}
+.movie-links .wish a {
+}
+.movie-links .share a {
+  background-image: url("../../public/images/icon-share.png");
 }
 
 .detail-box .info {
   width: 50%;
-  padding: 30px;
-  padding-left: 80px;
   box-sizing: border-box;
   animation: slideinleft 0.7s;
+  color: #fff;
+  padding-left: 50px;
+  font-size: 16px;
 }
 
 .detail-box .info h1 {
@@ -22,7 +78,7 @@
 }
 
 .detail-box .info p + p {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .detail-box .info .detail-genres {
@@ -39,7 +95,13 @@
 }
 
 .detail-box .info .detail-overview {
-  line-height: 2;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  opacity: 0.8;
 }
 
 @keyframes slideinright {

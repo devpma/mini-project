@@ -8,6 +8,7 @@
 .wishlist-wrap h1 {
   text-align: left;
   margin: 0 50px;
+  color: #fff;
 }
 
 @media screen and (max-width: 768px) {

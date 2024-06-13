@@ -10,10 +10,11 @@
 }
 body {
   min-width: 320px;
+  background: #000;
 }
 a {
   text-decoration: none;
-  color: #333;
+  color: #000;
 }
 img {
   max-width: 100%;
@@ -47,12 +48,45 @@ li {
   text-align: center;
   margin: 0 auto;
 }
+.wish,
+.wish a {
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size: cover;
+  background-image: url("../public/images/icon-heart.png");
+  background-color: transparent;
+  font-size: 0;
+}
+.wish.active,
+.wish.active a {
+  background-image: url("../public/images/icon-heart-on.png");
+}
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+@keyframes hithere {
+  30% {
+    transform: scale(1.2);
+  }
+  40%,
+  60% {
+    transform: rotate(-20deg) scale(1.2);
+  }
+  50% {
+    transform: rotate(20deg) scale(1.2);
+  }
+  70% {
+    transform: rotate(0deg) scale(1.2);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 @media screen and (max-width: 768px) {

@@ -132,25 +132,20 @@ const NavLogin = ({ user, spliceUserEmail, handleLogout }) => {
   return (
     <>
       <p className="user-info">
-        {user.photoURL ? (
-          <img src={user.photoURL} alt="" />
-        ) : (
-          <>
-            <span>
-              <strong>{spliceUserEmail(user.reloadUserInfo.email)}</strong>님
-              &nbsp;
-            </span>
-            <br />
-            어서오세요!
-          </>
-        )}
+        <Link to="/wishlist">
+          {user.photoURL ? (
+            <img src={user.photoURL} alt="profile img" />
+          ) : (
+            <img src="/public/images/icon-user.png" alt="profile img" />
+          )}
+        </Link>
+        <span>
+          <strong>{spliceUserEmail(user.reloadUserInfo.email)}</strong>&nbsp;님
+        </span>
       </p>
-      <div className="logged-in-dropdown">
-        <button onClick={handleLogout}>SIGN OUT</button>
-        <button>
-          <Link to="/wishlist">WISH LIST</Link>
-        </button>
-      </div>
+      <button onClick={handleLogout} className="btn-signout">
+        SIGN OUT
+      </button>
     </>
   );
 };

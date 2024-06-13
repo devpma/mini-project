@@ -111,10 +111,10 @@ const MovieCard = ({ id, title, score, img }) => {
         <p className="score">⭐️ {score}</p>
 
         <button
-          className={`wish ${isWish ? "liked" : "unliked"}`}
+          className={`wish ${isWish ? "active" : ""}`}
           onClick={handleOnWishlist}
         >
-          {isWish === null ? "⌛" : isWish ? "🩷" : "🤍"}
+          {isWish === null ? "⌛" : isWish ? "좋아요" : ""}
         </button>
       </div>
     </div>

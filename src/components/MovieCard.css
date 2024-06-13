@@ -24,6 +24,7 @@
 }
 
 .list-box p {
+  color: #fff;
   margin: 0;
 }
 .info {
@@ -42,9 +43,7 @@
   position: absolute;
   right: 10px;
   top: -40px;
-  font-size: 22px;
   cursor: pointer;
-  background: transparent;
   outline: none;
   border: none;
 }

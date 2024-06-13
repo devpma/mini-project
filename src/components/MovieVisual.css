@@ -1,21 +1,87 @@
 .visual-wrap .swiper-pagination-progressbar {
   top: inherit;
-  bottom: 0;
-  width: calc(100% - 40px);
-  left: 20px;
-  background: #eee;
+  bottom: 50px;
+  width: 50%;
+  background: transparent;
+  left: 50%;
+  background: #8c8c8c99;
+  left: 50%;
+  transform: translate(-50%);
+  border-radius: 6px;
+  padding: 2px 0;
+  overflow: hidden;
 }
 
 .visual-wrap
   .swiper-pagination-progressbar
   .swiper-pagination-progressbar-fill {
-  background: #333;
+  background: #fe2e2e;
+  box-shadow: 0 0 0 8px #000;
+  height: 100%;
+  border-radius: 10px;
 }
 
 .visual-wrap.swiper-horizontal {
-  padding: 20px;
 }
 
 .visual-wrap.swiper-horizontal img {
   cursor: pointer;
+}
+
+.visual-wrap .info {
+  position: absolute;
+  left: 50px;
+  top: 50%;
+  transform: translate(0, -50%);
+  max-width: 600px;
+}
+.visual-wrap .info strong {
+  color: #fff;
+  font-size: 4rem;
+  transition-delay: 1.5s;
+}
+
+.visual-wrap .info p {
+  color: #fff;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  transition-delay: 2.5s;
+  line-height: 1.7rem;
+}
+.visual-wrap .info strong,
+.visual-wrap .info p {
+  opacity: 0;
+  transition: all 1s;
+  position: relative;
+  bottom: -10px;
+}
+
+.visual-wrap .swiper-slide-active .info strong,
+.visual-wrap .swiper-slide-active .info p {
+  bottom: 0;
+  opacity: 1;
+}
+.visual-wrap .info .btn-detail {
+  font-size: 1.1rem;
+  display: inline-flex;
+  margin-top: 3rem;
+  border-radius: 50px;
+  height: 50px;
+  line-height: 50px;
+  color: #fff;
+  padding: 0 50px;
+  background: #00000078;
+  border: 1px solid #fff;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.visual-wrap .info .btn-detail:hover {
+  background: #fe2e2e;
+  border: none;
 }

@@ -2,17 +2,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
-  padding: 1.5rem;
-  background: #fff;
+  border-bottom: 1px solid #9996;
+  padding: 1rem;
+  background: #000;
   position: sticky;
   inset: 0;
   z-index: 10;
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.2);
 }
 
 .navbar-logo a {
-  color: #333;
+  color: #fff;
   text-decoration: none;
   font-size: 2rem;
 }
@@ -24,10 +24,13 @@
   margin: 0;
 }
 
-.navbar-links .btn-signup {
-  background: #eee;
+.navbar-links .btn-signup,
+.navbar-links .btn-signout {
+  background: #fe2e2e;
   padding: 10px 15px;
   border-radius: 27px;
+  color: #fff;
+  font-size: 0.9rem;
 }
 
 .navbar-links li,
@@ -42,7 +45,7 @@
   background: inherit;
   border: none;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0rem;
   padding: 0;
 }
 
@@ -65,11 +68,15 @@
 .logged-in .user-info {
   font-size: 0.8rem;
   margin-left: 0.8rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
 }
 .logged-in .user-info br {
   display: none;
 }
 .logged-in .user-info span {
+  margin-left: 10px;
   display: inline-block;
 }
 
@@ -89,7 +96,7 @@
   box-sizing: border-box;
   background: url("/public/images/icon-search.png") no-repeat calc(100% - 10px)
     50%;
-  background-size: auto 28px;
+  background-size: auto 24px;
 }
 
 .logged-in-dropdown {
@@ -154,7 +161,7 @@
   z-index: 10;
 }
 .nav-btn span {
-  border: 1px solid #333;
+  border: 1px solid #fff;
   display: block;
   transition: all 0.2s;
   position: relative;
@@ -178,7 +185,6 @@
   top: 0;
   height: 100%;
   overflow-y: auto;
-  background: #fff;
   width: 50vw;
   padding: 30px;
   padding-top: 6rem;
@@ -187,6 +193,7 @@
   display: none;
   transition: all 0.2s;
   min-width: 320px;
+  background: #000;
 }
 .active .nav-menu {
   right: 0;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { imgBasePath } from "./constant";
 import "./MovieDetail.css";
 import instance from "../api/axios";
@@ -30,24 +30,38 @@ const MovieDetail = () => {
     );
   }
   return (
-    <div className="detail-box">
-      <div className="detail-img">
-        <img
-          src={`${imgBasePath}${movieDetail.poster_path}`}
-          alt={movieDetail.title}
-        />
+    <>
+      <div className="detail-box">
+        <div className="info">
+          <h1>{movieDetail.title}</h1>
+          <p className="detail-score">⭐️ {movieDetail.vote_average}</p>
+          <p className="detail-genres">
+            {movieDetail.genres.map((data) => (
+              <span key={data.id}>{data.name}</span>
+            ))}
+          </p>
+          <p className="detail-overview">{movieDetail.overview}</p>
+        </div>
+        <div className="detail-img">
+          <img
+            src={`${imgBasePath}${movieDetail.backdrop_path}`}
+            alt={movieDetail.title}
+          />
+          <ul className="movie-links">
+            <li className="premovie">
+              <Link to="">예고편</Link>
+            </li>
+            <li className="wish">
+              <Link to="">위시리스트</Link>
+            </li>
+            <li className="share">
+              <Link to="">공유</Link>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div className="info">
-        <h1>{movieDetail.title}</h1>
-        <p className="detail-score">⭐️ {movieDetail.vote_average}</p>
-        <p className="detail-genres">
-          {movieDetail.genres.map((data) => (
-            <span key={data.id}>{data.name}</span>
-          ))}
-        </p>
-        <p className="detail-overview">{movieDetail.overview}</p>
-      </div>
-    </div>
+      <div className="detail-btm"></div>
+    </>
   );
 };
 
