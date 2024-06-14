@@ -5,7 +5,6 @@
   border-bottom: 1px solid #9996;
   padding: 1.5rem 1rem;
   background: #000;
-  position: sticky;
   inset: 0;
   z-index: 10;
   box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.2);

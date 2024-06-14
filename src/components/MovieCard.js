@@ -7,7 +7,7 @@ import { db } from "../firebase";
 import { useAuth } from "./AuthContext";
 import { useWishlist } from "./WishlistContext";
 
-const MovieCard = ({ id, title, score, img }) => {
+const MovieCard = ({ id, title, score, img, containerclass }) => {
   const { user } = useAuth();
   const { wishlist, fetchWishlist } = useWishlist();
   const [isWish, setIsWish] = useState(false);
@@ -79,7 +79,7 @@ const MovieCard = ({ id, title, score, img }) => {
   };
 
   return (
-    <div className="list-box">
+    <div className={`list-box ${containerclass || ""}`}>
       {!img ? (
         <div className="img empty"></div>
       ) : (
@@ -91,8 +91,11 @@ const MovieCard = ({ id, title, score, img }) => {
         <p className="title">{title}</p>
         <p className="score">⭐️ {score}</p>
         <button
-          className={`wish ${isWish ? "active" : ""}`}
+          className={`wish ${
+            isWish === null ? "loading" : isWish ? "active" : ""
+          }`}
           onClick={handleOnWishlist}
+          disabled={isWish === null} // Loading 중일 때 버튼 비활성화
         >
           {isWish === null ? "⌛" : isWish ? "좋아요" : "추가"}
         </button>
