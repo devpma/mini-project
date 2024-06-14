@@ -47,6 +47,7 @@ li {
   flex-direction: column;
   text-align: center;
   margin: 0 auto;
+  color: #fff;
 }
 .wish,
 .wish a {

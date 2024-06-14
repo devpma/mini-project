@@ -47,6 +47,8 @@
   cursor: pointer;
   font-size: 0rem;
   padding: 0;
+  font-size: 0.9rem;
+  color: #fff;
 }
 
 .logged-in {
@@ -78,6 +80,7 @@
 .logged-in .user-info span {
   margin-left: 10px;
   display: inline-block;
+  margin-bottom: 2px;
 }
 
 .search-wrap {

@@ -1,30 +1,36 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { imgBasePath } from "./constant";
 import "./MovieDetail.css";
-import { db } from "../firebase"; // firebase.js에서 Firestore를 가져옵니다
+import { db } from "../firebase";
 import instance from "../api/axios";
-import { useAuth } from "./AuthContext"; // useAuth 훅을 사용하여 user를 가져옵니다
+import { useAuth } from "./AuthContext";
+import { useWishlist } from "./WishlistContext";
 import {
   collection,
   addDoc,
   getDocs,
   query,
-  orderBy,
   where,
   deleteDoc,
   doc,
+  updateDoc,
+  orderBy,
 } from "firebase/firestore";
+import ReviewArea from "./ReviewArea";
+import DetailInfoArea from "./DetailInfoArea";
+import WishlistArea from "./WishlistArea";
 
 const MovieDetail = () => {
   const { id } = useParams();
   const [movieDetail, setMovieDetail] = useState(null);
   const { user } = useAuth();
+  const { wishlist, fetchWishlist } = useWishlist();
   const [review, setReview] = useState("");
   const [reviews, setReviews] = useState([]);
   const [showMore, setShowMore] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState(null);
   const [currentTab, clickTab] = useState(0);
-  const location = useLocation();
   const [isWish, setIsWish] = useState(false);
   const [wishlistDocId, setWishlistDocId] = useState(null);
 
@@ -33,6 +39,7 @@ const MovieDetail = () => {
       try {
         const response = await instance.get(`/movie/${id}`);
         setMovieDetail(response.data);
+        console.log("Fetched movie data:", response.data);
       } catch (error) {
         console.error("Error fetching movie data:", error);
       }
@@ -42,80 +49,102 @@ const MovieDetail = () => {
   }, [id]);
 
   useEffect(() => {
-    async function fetchReviews() {
-      try {
-        const reviewsQuery = query(
-          collection(db, "reviews"),
-          orderBy("timestamp", "desc")
-        );
-        const querySnapshot = await getDocs(reviewsQuery);
-        const reviewsData = querySnapshot.docs.map((doc) => doc.data());
-        setReviews(reviewsData);
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-      }
-    }
-
-    fetchReviews();
-  }, []);
-
-  const handleWriteReview = (e) => {
-    setReview(e.target.value);
-  };
-
-  const handleOnReview = async (event) => {
-    event.preventDefault();
-    if (user) {
-      try {
-        await addDoc(collection(db, "reviews"), {
-          movieId: id,
-          text: review,
-          userId: user.uid,
-          userName: user.displayName || "홍길동",
-          userPhoto: user.photoURL || "/images/icon-user.png",
-          timestamp: new Date(),
-        });
-        setReview("");
-        const reviewsQuery = query(
-          collection(db, "reviews"),
-          orderBy("timestamp", "desc")
-        );
-        const querySnapshot = await getDocs(reviewsQuery);
-        const reviewsData = querySnapshot.docs.map((doc) => doc.data());
-        setReviews(reviewsData);
-      } catch (error) {
-        console.error("Error adding review:", error);
-      }
-    } else {
-      alert("로그인 후 리뷰를 작성할 수 있습니다.");
-    }
-  };
-
-  const fetchWishlistStatus = useCallback(async () => {
-    if (user) {
-      try {
-        const q = query(
-          collection(db, "users", user.uid, "wishlist"),
-          where("movieId", "==", id)
-        );
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          const docId = querySnapshot.docs[0].id;
+    const checkWishlistStatus = () => {
+      if (user && wishlist) {
+        const wishItem = wishlist.find((item) => item.movieId === id);
+        if (wishItem) {
           setIsWish(true);
-          setWishlistDocId(docId);
+          setWishlistDocId(wishItem.id);
         } else {
           setIsWish(false);
           setWishlistDocId(null);
         }
+        console.log("Checked wishlist status:", { isWish, wishlistDocId });
+      }
+    };
+    checkWishlistStatus();
+  }, [user, wishlist, id]);
+
+  const handleOnReview = async (event) => {
+    event.preventDefault();
+    if (!user) {
+      alert("로그인 후 리뷰를 작성할 수 있습니다.");
+      return;
+    }
+
+    if (editingReviewId) {
+      try {
+        const docRef = doc(db, "reviews", editingReviewId);
+        await updateDoc(docRef, {
+          text: review,
+          timestamp: new Date(),
+        });
+        setReview("");
+        setEditingReviewId(null);
+        console.log("Updated review:", docRef.id);
       } catch (error) {
-        console.error("Error fetching wishlist status:", error);
+        console.error("Error updating review:", error);
+      }
+    } else {
+      try {
+        const docRef = await addDoc(collection(db, "reviews"), {
+          movieId: id,
+          text: review,
+          userId: user.uid,
+          userName: user.email,
+          userPhoto: user.photoURL || "/images/icon-user.png",
+          timestamp: new Date(),
+        });
+        setReview("");
+        console.log("Added new review:", docRef.id);
+      } catch (error) {
+        console.error("Error adding review:", error);
       }
     }
-  }, [id, user]);
 
-  useEffect(() => {
-    fetchWishlistStatus();
-  }, [fetchWishlistStatus]);
+    try {
+      console.log("Re-fetching reviews after adding/updating review");
+      const reviewsQuery = query(
+        collection(db, "reviews"),
+        where("movieId", "==", id),
+        orderBy("timestamp", "desc")
+      );
+      const querySnapshot = await getDocs(reviewsQuery);
+      const reviewsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log("Fetched reviews after adding/updating:", reviewsData);
+      setReviews(reviewsData);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    }
+  };
+
+  const handleEditReview = (review) => {
+    if (review.userId !== user.uid) {
+      alert("본인만 리뷰를 수정할 수 있습니다.");
+      return;
+    }
+    setReview(review.text);
+    setEditingReviewId(review.id);
+    console.log("Editing review:", review.id);
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!user) {
+      alert("로그인 후 리뷰를 삭제할 수 있습니다.");
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, "reviews", reviewId));
+      setReviews(reviews.filter((review) => review.id !== reviewId));
+      console.log("Deleted review:", reviewId);
+    } catch (error) {
+      console.error("Error deleting review:", error);
+    }
+  };
 
   const addToWishlist = async () => {
     if (user) {
@@ -129,10 +158,11 @@ const MovieDetail = () => {
             imageUrl: `${imgBasePath}${movieDetail.backdrop_path}`,
           }
         );
+        await fetchWishlist();
         setWishlistDocId(docRef.id);
-        window.dispatchEvent(new Event("wishlist-update"));
         setIsWish(true);
         alert("위시리스트에 추가되었습니다.");
+        console.log("Added to wishlist:", docRef.id);
       } catch (error) {
         console.error("Error adding to wishlist:", error);
       }
@@ -145,10 +175,11 @@ const MovieDetail = () => {
     if (user && wishlistDocId) {
       try {
         await deleteDoc(doc(db, "users", user.uid, "wishlist", wishlistDocId));
+        await fetchWishlist();
         setWishlistDocId(null);
-        window.dispatchEvent(new Event("wishlist-update"));
         setIsWish(false);
         alert("위시리스트에서 제거되었습니다.");
+        console.log("Removed from wishlist:", wishlistDocId);
       } catch (error) {
         console.error("Error removing from wishlist:", error);
       }
@@ -170,14 +201,24 @@ const MovieDetail = () => {
         <ReviewArea
           handleOnReview={handleOnReview}
           review={review}
-          handleWriteReview={handleWriteReview}
+          handleWriteReview={(e) => setReview(e.target.value)}
           reviews={reviews}
+          handleDeleteReview={handleDeleteReview}
+          user={user}
+          handleEditReview={handleEditReview}
+          editingReviewId={editingReviewId}
         />
       ),
     },
     {
       name: "상세정보",
-      content: <DetailInfoArea movieDetail={movieDetail} />,
+      content: (
+        <DetailInfoArea movieDetail={movieDetail} imgBasePath={imgBasePath} />
+      ),
+    },
+    {
+      name: "테스트",
+      content: <WishlistArea wishlist={wishlist} />,
     },
   ];
 
@@ -224,7 +265,7 @@ const MovieDetail = () => {
                   ? movieDetail.overview
                   : `${movieDetail.overview.substring(0, 100)}...`}
                 <span onClick={() => setShowMore(!showMore)} className="more">
-                  {showMore ? " 덜보기" : " 더보기"}
+                  {showMore ? " 접기" : " 더보기"}
                 </span>
               </>
             ) : (
@@ -278,73 +319,3 @@ const MovieDetail = () => {
 };
 
 export default MovieDetail;
-
-const ReviewArea = ({ handleOnReview, review, handleWriteReview, reviews }) => {
-  return (
-    <div className="review-wrap">
-      <form className="review-write" onSubmit={handleOnReview}>
-        <input
-          type="text"
-          className="write-input"
-          value={review}
-          placeholder="리뷰를 입력해 보세요."
-          onChange={handleWriteReview}
-        />
-        <button type="submit" className="write-btn">
-          리뷰작성
-        </button>
-      </form>
-      <div className="review-box">
-        <ul className="review">
-          {reviews.map((review, index) => (
-            <li className="box" key={index}>
-              <div className="img">
-                <img src={review.userPhoto} alt="profile img" />
-              </div>
-              <div className="info-box">
-                <p className="text">
-                  <span className="name">{review.userName}</span>
-                  {review.text}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-};
-
-const DetailInfoArea = ({ movieDetail }) => {
-  return (
-    <div className="detail-info-wrap">
-      <div className="overview">{movieDetail.overview}</div>
-      <div className="detail-info-box">
-        <img
-          src={`${imgBasePath}${movieDetail.poster_path}`}
-          alt={movieDetail.title}
-        />
-        <dl className="detail-info">
-          <dt>제목</dt>
-          <dd>
-            {movieDetail.title} ({movieDetail.original_title})
-          </dd>
-          <dt>장르</dt>
-          <dd>
-            {movieDetail.genres.map((data) => (
-              <span key={data.id}>{data.name}</span>
-            ))}
-          </dd>
-          <dt>평점</dt>
-          <dd>
-            {movieDetail.vote_average} ({movieDetail.vote_count})
-          </dd>
-          <dt>언어</dt>
-          <dd>{movieDetail.original_language}</dd>
-          <dt>발매일</dt>
-          <dd>{movieDetail.release_date}</dd>
-        </dl>
-      </div>
-    </div>
-  );
-};

@@ -1,29 +1,24 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../firebase"; // firebase 초기화 설정 경로
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase"; // firebase.js에서 Firebase 인증을 가져옵니다.
 
 const AuthContext = createContext();
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
-    const auth = getAuth(app);
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-      setIsLogged(!!user); // user가 있으면 true, 없으면 false
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
     });
-    return () => unsubscribe();
+    return unsubscribe;
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, isLogged }}>
-      {!loading && children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
   );
 };

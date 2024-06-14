@@ -11,6 +11,7 @@
   width: 80%;
   animation: slideinright 0.7s;
   position: relative;
+  min-height: 393px;
 }
 .detail-box .detail-img:after {
   content: "";
@@ -102,11 +103,11 @@
 .detail-box .info .detail-overview {
   line-height: 1.5;
   opacity: 0.8;
+  margin-right: 10px;
 }
 .detail-box .info .detail-overview .more {
   display: inline-flex;
   cursor: pointer;
-  margin-left: 10px;
   border-bottom: 1px solid #fff;
 }
 
@@ -177,6 +178,8 @@
 }
 .review-box {
   margin-top: 50px;
+  color: #fff;
+  text-align: center;
 }
 .review {
 }
@@ -200,9 +203,8 @@
   min-width: 32px;
 }
 .review .box .text {
+  position: relative;
   font-size: 0.9rem;
-  word-break: break-all;
-  opacity: 0.8;
 }
 .review .box .text .name {
   display: block;
@@ -210,6 +212,28 @@
   margin-bottom: 10px;
 }
 
+.review .box .text .review-text {
+  opacity: 0.8;
+  word-break: break-all;
+  width: 80%;
+}
+.review-btns {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.review-btns button {
+  background: #fff;
+  color: #333;
+  border: 1px solid #fff;
+  padding: 5px;
+  cursor: pointer;
+}
+.review-btns button + button {
+  margin-left: 10px;
+}
 .review .box .info {
 }
 
