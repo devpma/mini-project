@@ -2,30 +2,32 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { imgBasePath } from "./constant";
 import "./MovieDetail.css";
-import { db } from "../firebase";
 import instance from "../api/axios";
 import { useAuth } from "./AuthContext";
 import { useWishlist } from "./WishlistContext";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where,
-  deleteDoc,
-  doc,
-  updateDoc,
-  orderBy,
-} from "firebase/firestore";
 import ReviewArea from "./ReviewArea";
 import DetailInfoArea from "./DetailInfoArea";
 import WishlistArea from "./WishlistArea";
+import RelatedArea from "./RelatedArea";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "../firebase";
 
 const MovieDetail = () => {
   const { id } = useParams();
   const [movieDetail, setMovieDetail] = useState(null);
   const { user } = useAuth();
-  const { wishlist, fetchWishlist } = useWishlist();
+  const { wishlist, fetchWishlist, addToWishlist, removeFromWishlist } =
+    useWishlist();
   const [review, setReview] = useState("");
   const [reviews, setReviews] = useState([]);
   const [showMore, setShowMore] = useState(false);
@@ -37,6 +39,7 @@ const MovieDetail = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("Fetching movie data for ID:", id);
         const response = await instance.get(`/movie/${id}`);
         setMovieDetail(response.data);
         console.log("Fetched movie data:", response.data);
@@ -47,23 +50,6 @@ const MovieDetail = () => {
 
     fetchData();
   }, [id]);
-
-  useEffect(() => {
-    const checkWishlistStatus = () => {
-      if (user && wishlist) {
-        const wishItem = wishlist.find((item) => item.movieId === id);
-        if (wishItem) {
-          setIsWish(true);
-          setWishlistDocId(wishItem.id);
-        } else {
-          setIsWish(false);
-          setWishlistDocId(null);
-        }
-        console.log("Checked wishlist status:", { isWish, wishlistDocId });
-      }
-    };
-    checkWishlistStatus();
-  }, [user, wishlist, id]);
 
   const handleOnReview = async (event) => {
     event.preventDefault();
@@ -145,52 +131,39 @@ const MovieDetail = () => {
     }
   };
 
-  const addToWishlist = async () => {
-    if (!user) {
-      alert("로그인이 필요합니다.");
-      return;
-    }
-
-    try {
-      const docRef = await addDoc(
-        collection(db, `users/${user.uid}/wishlist`),
-        {
-          movieId: id,
-          name: movieDetail.title,
-          score: movieDetail.vote_average,
-          imageUrl: `${imgBasePath}${movieDetail.backdrop_path}`,
+  useEffect(() => {
+    const checkWishlistStatus = () => {
+      if (user && wishlist) {
+        const wishItem = wishlist.find((item) => item.movieId === id);
+        if (wishItem) {
+          setIsWish(true);
+          setWishlistDocId(wishItem.id);
+        } else {
+          setIsWish(false);
+          setWishlistDocId(null);
         }
+        console.log("Checked wishlist status:", { isWish, wishlistDocId });
+      }
+    };
+    checkWishlistStatus();
+  }, [user, wishlist, id]);
+
+  const handleToggleWishlist = async () => {
+    console.log("Toggling wishlist for movie:", id, "Current isWish:", isWish);
+    if (isWish) {
+      await removeFromWishlist(id);
+      setIsWish(false);
+      setWishlistDocId(null);
+      alert("위시리스트에서 제거되었습니다.");
+    } else {
+      await addToWishlist(
+        id,
+        movieDetail.title,
+        movieDetail.vote_average,
+        `${imgBasePath}${movieDetail.backdrop_path}`
       );
-      await fetchWishlist();
-      setWishlistDocId(docRef.id);
       setIsWish(true);
       alert("위시리스트에 추가되었습니다.");
-      console.log("Added to wishlist:", docRef.id);
-    } catch (error) {
-      console.error("Error adding to wishlist:", error);
-    }
-  };
-
-  const removeFromWishlist = async () => {
-    if (!user || !wishlistDocId) return;
-
-    try {
-      await deleteDoc(doc(db, `users/${user.uid}/wishlist`, wishlistDocId));
-      await fetchWishlist();
-      setWishlistDocId(null);
-      setIsWish(false);
-      alert("위시리스트에서 제거되었습니다.");
-      console.log("Removed from wishlist:", wishlistDocId);
-    } catch (error) {
-      console.error("Error removing from wishlist:", error);
-    }
-  };
-
-  const handleOnWishlist = async () => {
-    if (isWish) {
-      await removeFromWishlist();
-    } else {
-      await addToWishlist();
     }
   };
 
@@ -229,13 +202,14 @@ const MovieDetail = () => {
       ),
     },
     {
-      name: "위시리스트",
-      content: (
-        <WishlistArea
-          wishlist={wishlist}
-          handleOnWishlist={handleOnWishlist}
-          isWish={isWish}
+      name: "관련영상",
+      content: movieDetail?.belongs_to_collection ? (
+        <RelatedArea
+          belongs_to_collection={movieDetail.belongs_to_collection}
+          handleOnWishlist={handleToggleWishlist}
         />
+      ) : (
+        <p className="related-area no-data">관련 영상이 비어 있습니다.</p>
       ),
     },
   ];
@@ -279,7 +253,7 @@ const MovieDetail = () => {
               <li>
                 <button
                   className={`wish ${isWish ? "active" : ""}`}
-                  onClick={handleOnWishlist}
+                  onClick={handleToggleWishlist}
                 >
                   {isWish ? "위시리스트에서 제거" : "위시리스트에 추가"}
                 </button>

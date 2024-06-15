@@ -26,7 +26,7 @@ const DetailInfoArea = ({ movieDetail, imgBasePath }) => {
           </dd>
           <dt>언어</dt>
           <dd>{movieDetail.original_language}</dd>
-          <dt>발매일</dt>
+          <dt>개봉일</dt>
           <dd>{movieDetail.release_date}</dd>
         </dl>
       </div>

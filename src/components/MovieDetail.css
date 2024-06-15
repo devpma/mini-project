@@ -70,6 +70,12 @@
   background-image: url("../../public/images/icon-share.png");
 }
 
+.tab-content {
+  min-height: 50vh;
+}
+.tab-contet p {
+  color: #fff;
+}
 .detail-box .info {
   width: 50%;
   box-sizing: border-box;
@@ -280,6 +286,26 @@
   margin-top: 3rem;
 }
 
+.related-area.no-data {
+  margin: 50px auto;
+}
+.related-area {
+  margin: 50px auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+.related-area .related-item {
+  position: relative;
+  width: 20%;
+}
+.related-info {
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+.related-info .wish {
+  top: 10px;
+}
 @keyframes slideinright {
   from {
     opacity: 0;

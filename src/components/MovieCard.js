@@ -46,6 +46,7 @@ const MovieCard = ({ id, title, score, img, containerclass }) => {
         await fetchWishlist();
         setWishlistDocId(docRef.id);
         setIsWish(true);
+        alert("위시리스트에 추가되었습니다.");
         console.log("Added to wishlist:", docRef.id);
       } catch (error) {
         console.error("Error adding to wishlist:", error);
