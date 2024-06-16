@@ -39,12 +39,6 @@ const RelatedArea = ({ handleOnWishlist, belongs_to_collection }) => {
         <div className="related-info">
           <h3>{belongs_to_collection.name}</h3>
           <p>{belongs_to_collection.overview}</p>
-          <button
-            className={`wish ${isWish ? "active" : ""}`}
-            onClick={handleToggleWishlist}
-          >
-            {isWish ? "위시리스트에서 제거" : "위시리스트에 추가"}
-          </button>
         </div>
       </div>
     </div>

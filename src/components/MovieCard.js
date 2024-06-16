@@ -1,88 +1,38 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { imgBasePath } from "./constant";
+import { useWishlist } from "../components/WishlistContext";
 import "./MovieCard.css";
-import { collection, addDoc, deleteDoc, doc } from "firebase/firestore";
-import { db } from "../firebase";
-import { useAuth } from "./AuthContext";
-import { useWishlist } from "./WishlistContext";
 
 const MovieCard = ({ id, title, score, img, containerclass }) => {
-  const { user } = useAuth();
-  const { wishlist, fetchWishlist } = useWishlist();
+  const { wishlist, addToWishlist, removeFromWishlist, fetchWishlist } =
+    useWishlist();
+  const [loading, setLoading] = useState(false);
   const [isWish, setIsWish] = useState(false);
-  const [wishlistDocId, setWishlistDocId] = useState(null);
-
-  const fetchWishlistStatus = useCallback(() => {
-    if (user && wishlist) {
-      const wishItem = wishlist.find((item) => item.movieId === id);
-      if (wishItem) {
-        setIsWish(true);
-        setWishlistDocId(wishItem.id);
-      } else {
-        setIsWish(false);
-        setWishlistDocId(null);
-      }
-      console.log("Fetched wishlist status:", { isWish, wishlistDocId });
-    }
-  }, [user, wishlist, id]);
 
   useEffect(() => {
-    fetchWishlistStatus();
-  }, [fetchWishlistStatus]);
+    const wishItem = wishlist.find((item) => item.movieId === id);
+    setIsWish(!!wishItem);
+    console.log("Movie ID:", id, "Wish Item:", wishItem);
+  }, [wishlist, id]);
 
-  const addToWishlist = async () => {
-    if (user) {
-      try {
-        const docRef = await addDoc(
-          collection(db, "users", user.uid, "wishlist"),
-          {
-            movieId: id,
-            name: title,
-            score,
-            imageUrl: `${imgBasePath}${img}`,
-          }
-        );
-        await fetchWishlist();
-        setWishlistDocId(docRef.id);
-        setIsWish(true);
-        alert("위시리스트에 추가되었습니다.");
-        console.log("Added to wishlist:", docRef.id);
-      } catch (error) {
-        console.error("Error adding to wishlist:", error);
-      }
-    } else {
-      alert("로그인이 필요합니다.");
-    }
-  };
-
-  const removeFromWishlist = async () => {
-    if (user && wishlistDocId) {
-      try {
-        await deleteDoc(doc(db, "users", user.uid, "wishlist", wishlistDocId));
-        await fetchWishlist();
-        setWishlistDocId(null);
-        setIsWish(false);
-        alert("위시리스트에서 제거되었습니다.");
-        console.log("Removed from wishlist:", wishlistDocId);
-      } catch (error) {
-        console.error("Error removing from wishlist:", error);
-      }
-    }
-  };
-
-  const handleOnWishlist = async () => {
+  const handleToggleWishlist = async () => {
+    setLoading(true);
     if (isWish) {
-      await removeFromWishlist();
+      await removeFromWishlist(id);
     } else {
-      await addToWishlist();
+      await addToWishlist(id, title, score, img);
     }
+    await fetchWishlist();
+    window.dispatchEvent(new Event("wishlist-update"));
+    setLoading(false);
+    console.log("Toggled wishlist for movie:", id, "Current isWish:", isWish);
   };
 
   return (
     <div className={`list-box ${containerclass || ""}`}>
       {!img ? (
-        <div className="img empty"></div>
+        <Link to={`/${id}`} className="img empty"></Link>
       ) : (
         <Link to={`/${id}`} className="img">
           <img src={`${imgBasePath}${img}`} alt={title} />
@@ -92,13 +42,11 @@ const MovieCard = ({ id, title, score, img, containerclass }) => {
         <p className="title">{title}</p>
         <p className="score">⭐️ {score}</p>
         <button
-          className={`wish ${
-            isWish === null ? "loading" : isWish ? "active" : ""
-          }`}
-          onClick={handleOnWishlist}
-          disabled={isWish === null} // Loading 중일 때 버튼 비활성화
+          className={`wish ${loading ? "loading" : isWish ? "active" : ""}`}
+          onClick={handleToggleWishlist}
+          disabled={loading} // Loading 중일 때 버튼 비활성화
         >
-          {isWish === null ? "⌛" : isWish ? "좋아요" : "추가"}
+          {loading ? "⌛" : isWish ? "좋아요" : "추가"}
         </button>
       </div>
     </div>

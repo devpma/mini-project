@@ -8,11 +8,14 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import MovieVisual from "../../components/MovieVisual";
+import { useWishlist } from "../../components/WishlistContext";
 
 function MainPage() {
   const [movies, setMovies] = useState();
   const [visualMovies, setVisualMovies] = useState();
   const [parallaxSwiper, setParallaxSwiper] = useState(null);
+  const { fetchWishlist } = useWishlist();
+
   const parallaxAmount = parallaxSwiper ? parallaxSwiper.width * 0.95 : 0;
   const parallaxOpacity = 0.5;
 
@@ -39,11 +42,15 @@ function MainPage() {
     fetchVisualData();
   }, [fetchVisualData]);
 
+  useEffect(() => {
+    fetchWishlist(); // 컴포넌트가 마운트될 때 위시리스트 상태를 가져옴
+  }, [fetchWishlist]);
+
   if (!movies) {
     return <span className="loader"></span>;
   }
   const mainSliderConfigs = {
-    containerClass: "swiper-container hero-slider",
+    containerclass: "swiper-container hero-slider",
     parallax: true,
     centeredSlides: true,
     speed: 500,
@@ -55,7 +62,7 @@ function MainPage() {
     <>
       <Swiper
         {...mainSliderConfigs}
-        getSwiper={setParallaxSwiper}
+        onSwiper={setParallaxSwiper}
         pagination={{
           type: "progressbar",
           clickable: true,

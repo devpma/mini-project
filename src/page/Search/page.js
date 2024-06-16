@@ -3,22 +3,24 @@ import MovieCard from "../../components/MovieCard";
 import axios from "axios";
 import useQuery from "../../hooks/useQuery";
 import { useDebounce } from "../../hooks/useDebounce";
+import { useWishlist } from "../../components/WishlistContext";
 
-const Searchpage = ({ id, title, score, img }) => {
+const SearchPage = () => {
   const query = useQuery();
   const [searchResults, setSearchResults] = useState([]);
   const searchTerm = query.get("keyword");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const { wishlist } = useWishlist();
 
   const fetchSearchData = async (searchTerm) => {
     try {
       const apiKey = process.env.REACT_APP_MY_API;
-
       const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=ko-KR&query=${searchTerm}`;
       const response = await axios.get(url);
-
       setSearchResults(response.data.results);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching search data:", error);
+    }
   };
 
   useEffect(() => {
@@ -29,17 +31,21 @@ const Searchpage = ({ id, title, score, img }) => {
 
   return (
     <div className="list-wrap">
-      {searchResults.map((movie) => (
-        <MovieCard
-          key={movie.id}
-          id={movie.id}
-          title={movie.title}
-          img={movie.poster_path}
-          score={movie.vote_average}
-        />
-      ))}
+      {searchResults.map((movie) => {
+        const isWish = wishlist.some((item) => item.movieId === movie.id);
+        return (
+          <MovieCard
+            key={movie.id}
+            id={movie.id}
+            title={movie.title}
+            img={movie.poster_path}
+            score={movie.vote_average}
+            isWish={isWish}
+          />
+        );
+      })}
     </div>
   );
 };
 
-export default Searchpage;
+export default SearchPage;

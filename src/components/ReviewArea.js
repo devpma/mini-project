@@ -25,7 +25,7 @@ const ReviewArea = ({
           {editingReviewId ? "리뷰수정" : "리뷰작성"}
         </button>
       </form>
-      {reviews.length === 0 ? (
+      {!reviews ? (
         <div className="review-box no-data">리뷰가 없습니다. </div>
       ) : (
         <div className="review-box">

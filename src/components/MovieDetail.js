@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { imgBasePath } from "./constant";
 import "./MovieDetail.css";
 import instance from "../api/axios";
@@ -7,18 +7,17 @@ import { useAuth } from "./AuthContext";
 import { useWishlist } from "./WishlistContext";
 import ReviewArea from "./ReviewArea";
 import DetailInfoArea from "./DetailInfoArea";
-import WishlistArea from "./WishlistArea";
 import RelatedArea from "./RelatedArea";
 import {
   addDoc,
   collection,
   deleteDoc,
   doc,
+  updateDoc,
+  query,
+  where,
   getDocs,
   orderBy,
-  query,
-  updateDoc,
-  where,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -26,23 +25,60 @@ const MovieDetail = () => {
   const { id } = useParams();
   const [movieDetail, setMovieDetail] = useState(null);
   const { user } = useAuth();
-  const { wishlist, fetchWishlist, addToWishlist, removeFromWishlist } =
-    useWishlist();
   const [review, setReview] = useState("");
   const [reviews, setReviews] = useState([]);
   const [showMore, setShowMore] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [currentTab, setCurrentTab] = useState(0);
   const [isWish, setIsWish] = useState(false);
-  const [wishlistDocId, setWishlistDocId] = useState(null);
+
+  const { wishlist, fetchWishlist, addToWishlist, removeFromWishlist } =
+    useWishlist();
+
+  useEffect(() => {
+    const fetchMovieDetail = async () => {
+      try {
+        const apiKey = process.env.REACT_APP_MY_API;
+        const response = await fetch(
+          `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=ko-KR`
+        );
+        const data = await response.json();
+        setMovieDetail(data);
+      } catch (error) {
+        console.error("Error fetching movie details:", error);
+      }
+    };
+
+    fetchMovieDetail();
+  }, [id]);
+
+  useEffect(() => {
+    const wishItem = wishlist.find((item) => item.movieId === parseInt(id));
+    setIsWish(!!wishItem);
+    console.log("Movie ID:", id, "Wish Item:", wishItem);
+  }, [wishlist, id]);
+
+  const handleToggleWishlist = async () => {
+    if (isWish) {
+      await removeFromWishlist(parseInt(id));
+    } else {
+      await addToWishlist(
+        parseInt(id),
+        movieDetail.title,
+        movieDetail.vote_average,
+        movieDetail.backdrop_path
+      );
+    }
+    fetchWishlist();
+    window.dispatchEvent(new Event("wishlist-update"));
+    console.log("Toggled wishlist for movie:", id, "Current isWish:", isWish);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching movie data for ID:", id);
         const response = await instance.get(`/movie/${id}`);
         setMovieDetail(response.data);
-        console.log("Fetched movie data:", response.data);
       } catch (error) {
         console.error("Error fetching movie data:", error);
       }
@@ -50,6 +86,19 @@ const MovieDetail = () => {
 
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    const checkWishlistStatus = () => {
+      if (user && wishlist) {
+        const wishItem = wishlist.find(
+          (item) => item.movieId.toString() === id.toString()
+        );
+        setIsWish(!!wishItem);
+        console.log("Check wishlist status:", { isWish: !!wishItem, wishlist });
+      }
+    };
+    checkWishlistStatus();
+  }, [user, wishlist, id]);
 
   const handleOnReview = async (event) => {
     event.preventDefault();
@@ -67,9 +116,8 @@ const MovieDetail = () => {
         });
         setReview("");
         setEditingReviewId(null);
-        console.log("Updated review:", docRef.id);
       } else {
-        const docRef = await addDoc(collection(db, "reviews"), {
+        await addDoc(collection(db, "reviews"), {
           movieId: id,
           text: review,
           userId: user.uid,
@@ -78,10 +126,8 @@ const MovieDetail = () => {
           timestamp: new Date(),
         });
         setReview("");
-        console.log("Added new review:", docRef.id);
       }
-
-      await fetchReviews(); // 리뷰 추가 또는 업데이트 후 리뷰 목록을 다시 가져옴
+      fetchReviews();
     } catch (error) {
       console.error("Error adding or updating review:", error);
     }
@@ -100,7 +146,6 @@ const MovieDetail = () => {
         ...doc.data(),
       }));
       setReviews(reviewsData);
-      console.log("Fetched reviews:", reviewsData);
     } catch (error) {
       console.error("Error fetching reviews:", error);
     }
@@ -113,7 +158,6 @@ const MovieDetail = () => {
     }
     setReview(review.text);
     setEditingReviewId(review.id);
-    console.log("Editing review:", review.id);
   };
 
   const handleDeleteReview = async (reviewId) => {
@@ -125,45 +169,8 @@ const MovieDetail = () => {
     try {
       await deleteDoc(doc(db, "reviews", reviewId));
       setReviews(reviews.filter((review) => review.id !== reviewId));
-      console.log("Deleted review:", reviewId);
     } catch (error) {
       console.error("Error deleting review:", error);
-    }
-  };
-
-  useEffect(() => {
-    const checkWishlistStatus = () => {
-      if (user && wishlist) {
-        const wishItem = wishlist.find((item) => item.movieId === id);
-        if (wishItem) {
-          setIsWish(true);
-          setWishlistDocId(wishItem.id);
-        } else {
-          setIsWish(false);
-          setWishlistDocId(null);
-        }
-        console.log("Checked wishlist status:", { isWish, wishlistDocId });
-      }
-    };
-    checkWishlistStatus();
-  }, [user, wishlist, id]);
-
-  const handleToggleWishlist = async () => {
-    console.log("Toggling wishlist for movie:", id, "Current isWish:", isWish);
-    if (isWish) {
-      await removeFromWishlist(id);
-      setIsWish(false);
-      setWishlistDocId(null);
-      alert("위시리스트에서 제거되었습니다.");
-    } else {
-      await addToWishlist(
-        id,
-        movieDetail.title,
-        movieDetail.vote_average,
-        `${imgBasePath}${movieDetail.backdrop_path}`
-      );
-      setIsWish(true);
-      alert("위시리스트에 추가되었습니다.");
     }
   };
 
@@ -178,7 +185,6 @@ const MovieDetail = () => {
         console.error("Failed to copy link: ", err);
       });
   };
-
   const menuArr = [
     {
       name: "리뷰",
@@ -217,75 +223,81 @@ const MovieDetail = () => {
   return (
     <>
       {movieDetail ? (
-        <div className="detail-box">
-          <div className="info">
-            <h1>{movieDetail.title}</h1>
-            <p className="detail-score">⭐️ {movieDetail.vote_average}</p>
-            <p className="detail-genres">
-              {movieDetail.genres.map((genre) => (
-                <span key={genre.id}>{genre.name}</span>
-              ))}
-            </p>
-            <p className="detail-overview">
-              {movieDetail.overview.length > 100
-                ? showMore
-                  ? movieDetail.overview
-                  : `${movieDetail.overview.substring(0, 100)}...`
-                : movieDetail.overview}
-              {movieDetail.overview.length > 100 && (
-                <span onClick={() => setShowMore(!showMore)} className="more">
-                  {showMore ? " 접기" : " 더보기"}
-                </span>
-              )}
-            </p>
+        <>
+          <div className="detail-box">
+            <div className="info">
+              <h1>{movieDetail.title}</h1>
+              <p className="detail-score">⭐️ {movieDetail.vote_average}</p>
+              <p className="detail-genres">
+                {movieDetail.genres && movieDetail.genres.length > 0 ? (
+                  movieDetail.genres.map((genre) => (
+                    <span key={genre.id}>{genre.name}</span>
+                  ))
+                ) : (
+                  <p>장르 정보가 없습니다.</p>
+                )}
+              </p>
+              <p className="detail-overview">
+                {movieDetail.overview && movieDetail.overview.length > 100
+                  ? showMore
+                    ? movieDetail.overview
+                    : `${movieDetail.overview.substring(0, 100)}...`
+                  : movieDetail.overview}
+                {movieDetail.overview && movieDetail.overview.length > 100 && (
+                  <span onClick={() => setShowMore(!showMore)} className="more">
+                    {showMore ? " 접기" : " 더보기"}
+                  </span>
+                )}
+              </p>
+            </div>
+            <div className="detail-img">
+              <img
+                src={`${imgBasePath}${movieDetail.backdrop_path}`}
+                alt={movieDetail.title}
+              />
+              <ul className="movie-links">
+                <li>
+                  <button
+                    className={`wish ${isWish ? "active" : ""}`}
+                    onClick={handleToggleWishlist}
+                  >
+                    {isWish ? "위시리스트에서 제거" : "위시리스트에 추가"}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="share"
+                    onClick={() =>
+                      navigator.clipboard.writeText(window.location.href)
+                    }
+                  >
+                    공유
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div className="detail-img">
-            <img
-              src={`${imgBasePath}${movieDetail.backdrop_path}`}
-              alt={movieDetail.title}
-            />
-            <ul className="movie-links">
-              <li>
-                <Link to="" className="premovie">
-                  예고편
-                </Link>
-              </li>
-              <li>
-                <button
-                  className={`wish ${isWish ? "active" : ""}`}
-                  onClick={handleToggleWishlist}
+          <div className="detail-btm">
+            <ul className="detail-tabs">
+              {menuArr.map((item, index) => (
+                <li
+                  key={index}
+                  className={index === currentTab ? "active" : ""}
+                  onClick={() => setCurrentTab(index)}
                 >
-                  {isWish ? "위시리스트에서 제거" : "위시리스트에 추가"}
-                </button>
-              </li>
-              <li>
-                <button className="share" onClick={copyLinkToClipboard}>
-                  공유
-                </button>
-              </li>
+                  {item.name}
+                </li>
+              ))}
             </ul>
+            <div className="tab-content">{menuArr[currentTab].content}</div>
           </div>
-        </div>
+        </>
       ) : (
         <div className="no-data">
           <span className="loader"></span>
           <div>영화를 찾을 수 없습니다.</div>
         </div>
       )}
-      <div className="detail-btm">
-        <ul className="detail-tabs">
-          {menuArr.map((item, index) => (
-            <li
-              key={index}
-              className={index === currentTab ? "active" : ""}
-              onClick={() => setCurrentTab(index)}
-            >
-              {item.name}
-            </li>
-          ))}
-        </ul>
-        <div className="tab-content">{menuArr[currentTab].content}</div>
-      </div>
     </>
   );
 };

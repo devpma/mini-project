@@ -29,12 +29,28 @@
     rgba(0, 212, 255, 0) 100%
   );
 }
+.detail-box .detail-img:before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  height: 140px;
+  width: 100%;
+  bottom: 0px;
+  right: 0;
+  z-index: 1;
+  background: linear-gradient(
+    2deg,
+    rgba(0, 0, 0, 9) 0%,
+    rgba(0, 212, 255, 0) 100%
+  );
+}
 
 .movie-links {
   display: flex;
   position: absolute;
   bottom: 50px;
   right: 50px;
+  z-index: 3;
 }
 .movie-links li {
 }
@@ -262,6 +278,12 @@
 }
 .detail-info-box img {
   width: 300px;
+}
+.detail-info-box .empty {
+  width: 300px;
+  height: 400px;
+  background: #eee;
+  border-radius: 10px;
 }
 
 .detail-info-box .detail-info {
