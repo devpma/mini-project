@@ -1,4 +1,3 @@
-// AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../firebase";
 
@@ -15,8 +14,7 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
     });
-
-    return unsubscribe;
+    return () => unsubscribe(); // Unsubscribe 함수 호출
   }, []);
 
   return (

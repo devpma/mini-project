@@ -1,15 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
+import { imgBasePath } from "../../components/constant"; // 절대 경로로 수정
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -20,40 +14,31 @@ const Wishlist = () => {
     const user = auth.currentUser;
     if (user) {
       try {
-        console.log("Fetching wishlist for user:", user.uid);
         const wishlistRef = collection(db, "users", user.uid, "wishlist");
         const wishlistSnapshot = await getDocs(wishlistRef);
         const wishlistData = wishlistSnapshot.docs.map((doc) => ({
           id: doc.id,
           movieId: doc.data().movieId,
-          ...doc.data(),
+          title: doc.data().title,
+          voteAverage: doc.data().voteAverage,
+          backdropPath: doc.data().backdropPath,
         }));
-        console.log("Fetched wishlist data:", wishlistData);
         setWishlistItems(wishlistData);
       } catch (error) {
-        console.error("Error fetching wishlist data:", error);
       } finally {
         setLoading(false);
       }
     } else {
-      console.log("User not authenticated");
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      fetchWishlist();
-    } else {
-      setLoading(false);
-    }
-
+    fetchWishlist();
     const handleWishlistUpdate = () => {
       fetchWishlist();
     };
     window.addEventListener("wishlist-update", handleWishlistUpdate);
-
     return () => {
       window.removeEventListener("wishlist-update", handleWishlistUpdate);
     };
@@ -63,7 +48,6 @@ const Wishlist = () => {
     const user = auth.currentUser;
     if (user) {
       try {
-        console.log("Removing item from wishlist:", itemId);
         const itemDoc = doc(db, "users", user.uid, "wishlist", itemId);
         await deleteDoc(itemDoc);
         setWishlistItems((prevItems) =>
@@ -91,26 +75,33 @@ const Wishlist = () => {
                 <div>위시리스트에 담긴 영화가 없습니다.</div>
               </div>
             ) : (
-              wishlistItems.map((item) => (
-                <li key={item.id} className="list-box">
-                  <div
-                    className="img"
-                    onClick={() => navigate(`/${item.movieId}`)}
-                  >
-                    <img src={item.img} alt={item.title} />
-                  </div>
-                  <div className="info">
-                    <p className="title">{item.title}</p>
-                    <p className="score">⭐️ {item.score}</p>
-                    <button
-                      className="wish active"
-                      onClick={() => removeFromWishlist(item.id)}
+              wishlistItems.map((item) => {
+                const imageUrl = item.backdropPath
+                  ? `${imgBasePath}${item.backdropPath}`
+                  : null;
+                return (
+                  <li key={item.id} className="list-box">
+                    <div
+                      className={`img ${!imageUrl ? "empty" : ""}`}
+                      onClick={() => navigate(`/${item.movieId}`)}
                     >
-                      좋아요
-                    </button>
-                  </div>
-                </li>
-              ))
+                      {imageUrl ? (
+                        <img src={imageUrl} alt={item.title} />
+                      ) : null}
+                    </div>
+                    <div className="info">
+                      <p className="title">{item.title}</p>
+                      <p className="score">⭐️ {item.voteAverage}</p>
+                      <button
+                        className="wish active"
+                        onClick={() => removeFromWishlist(item.id)}
+                      >
+                        좋아요
+                      </button>
+                    </div>
+                  </li>
+                );
+              })
             )}
           </ul>
         </div>

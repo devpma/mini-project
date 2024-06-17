@@ -25,8 +25,8 @@ const ReviewArea = ({
           {editingReviewId ? "리뷰수정" : "리뷰작성"}
         </button>
       </form>
-      {!reviews ? (
-        <div className="review-box no-data">리뷰가 없습니다. </div>
+      {!reviews || reviews.length === 0 ? (
+        <div className="review-box no-data">리뷰가 없습니다.</div>
       ) : (
         <div className="review-box">
           <ul className="review">
@@ -40,12 +40,18 @@ const ReviewArea = ({
                     <span className="name">{review.userName}</span>
                     <p className="review-text">{review.text}</p>
                     {user ? (
-                      <div class="review-btns">
-                        <button onClick={() => handleEditReview(review)}>
+                      <div className="review-btns">
+                        <button
+                          className="edit"
+                          onClick={() => handleEditReview(review)}
+                        >
                           수정
                         </button>
                         {review.userId === user?.uid && (
-                          <button onClick={() => handleDeleteReview(review.id)}>
+                          <button
+                            className="delete"
+                            onClick={() => handleDeleteReview(review.id)}
+                          >
                             삭제
                           </button>
                         )}

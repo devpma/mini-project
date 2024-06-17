@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MovieCard from "../../components/MovieCard";
 import axios from "axios";
 import useQuery from "../../hooks/useQuery";
@@ -8,42 +8,58 @@ import { useWishlist } from "../../components/WishlistContext";
 const SearchPage = () => {
   const query = useQuery();
   const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
   const searchTerm = query.get("keyword");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const { wishlist } = useWishlist();
+  const { wishlist, fetchWishlist } = useWishlist();
 
-  const fetchSearchData = async (searchTerm) => {
+  const fetchSearchData = useCallback(async (searchTerm) => {
     try {
+      setLoading(true);
       const apiKey = process.env.REACT_APP_MY_API;
       const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=ko-KR&query=${searchTerm}`;
       const response = await axios.get(url);
       setSearchResults(response.data.results);
     } catch (error) {
       console.error("Error fetching search data:", error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (debouncedSearchTerm) {
       fetchSearchData(debouncedSearchTerm);
     }
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, fetchSearchData]);
+
+  useEffect(() => {
+    fetchWishlist();
+  }, [fetchWishlist]);
 
   return (
     <div className="list-wrap">
-      {searchResults.map((movie) => {
-        const isWish = wishlist.some((item) => item.movieId === movie.id);
-        return (
-          <MovieCard
-            key={movie.id}
-            id={movie.id}
-            title={movie.title}
-            img={movie.poster_path}
-            score={movie.vote_average}
-            isWish={isWish}
-          />
-        );
-      })}
+      {loading ? (
+        <div className="loading">
+          <span className="loader"></span>
+        </div>
+      ) : searchResults.length === 0 ? (
+        <p>검색 결과가 없습니다.</p>
+      ) : (
+        searchResults.map((movie) => {
+          const isWish = wishlist.some((item) => item.movieId === movie.id);
+          return (
+            <MovieCard
+              key={movie.id}
+              id={movie.id}
+              title={movie.title}
+              img={movie.poster_path}
+              score={movie.vote_average}
+              isWish={isWish}
+            />
+          );
+        })
+      )}
     </div>
   );
 };

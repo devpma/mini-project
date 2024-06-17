@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { imgBasePath } from "./constant";
 import "./MovieDetail.css";
-import instance from "../api/axios";
 import { useAuth } from "./AuthContext";
 import { useWishlist } from "./WishlistContext";
 import ReviewArea from "./ReviewArea";
@@ -53,12 +52,12 @@ const MovieDetail = () => {
   }, [id]);
 
   useEffect(() => {
+    console.log("Wishlist state in MovieDetail:", wishlist); // 로그 추가
     const wishItem = wishlist.find((item) => item.movieId === parseInt(id));
     setIsWish(!!wishItem);
-    console.log("Movie ID:", id, "Wish Item:", wishItem);
   }, [wishlist, id]);
 
-  const handleToggleWishlist = async () => {
+  const handleToggleWishlist = useCallback(async () => {
     if (isWish) {
       await removeFromWishlist(parseInt(id));
     } else {
@@ -69,36 +68,37 @@ const MovieDetail = () => {
         movieDetail.backdrop_path
       );
     }
-    fetchWishlist();
-    window.dispatchEvent(new Event("wishlist-update"));
-    console.log("Toggled wishlist for movie:", id, "Current isWish:", isWish);
-  };
+    await fetchWishlist();
+  }, [
+    isWish,
+    id,
+    movieDetail,
+    addToWishlist,
+    removeFromWishlist,
+    fetchWishlist,
+  ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await instance.get(`/movie/${id}`);
-        setMovieDetail(response.data);
-      } catch (error) {
-        console.error("Error fetching movie data:", error);
-      }
-    };
-
-    fetchData();
+  const fetchReviews = useCallback(async () => {
+    try {
+      const reviewsQuery = query(
+        collection(db, "reviews"),
+        where("movieId", "==", id),
+        orderBy("timestamp", "desc")
+      );
+      const querySnapshot = await getDocs(reviewsQuery);
+      const reviewsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setReviews(reviewsData);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    }
   }, [id]);
 
   useEffect(() => {
-    const checkWishlistStatus = () => {
-      if (user && wishlist) {
-        const wishItem = wishlist.find(
-          (item) => item.movieId.toString() === id.toString()
-        );
-        setIsWish(!!wishItem);
-        console.log("Check wishlist status:", { isWish: !!wishItem, wishlist });
-      }
-    };
-    checkWishlistStatus();
-  }, [user, wishlist, id]);
+    fetchReviews();
+  }, [fetchReviews]);
 
   const handleOnReview = async (event) => {
     event.preventDefault();
@@ -130,24 +130,6 @@ const MovieDetail = () => {
       fetchReviews();
     } catch (error) {
       console.error("Error adding or updating review:", error);
-    }
-  };
-
-  const fetchReviews = async () => {
-    try {
-      const reviewsQuery = query(
-        collection(db, "reviews"),
-        where("movieId", "==", id),
-        orderBy("timestamp", "desc")
-      );
-      const querySnapshot = await getDocs(reviewsQuery);
-      const reviewsData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setReviews(reviewsData);
-    } catch (error) {
-      console.error("Error fetching reviews:", error);
     }
   };
 
@@ -185,6 +167,7 @@ const MovieDetail = () => {
         console.error("Failed to copy link: ", err);
       });
   };
+
   const menuArr = [
     {
       name: "리뷰",
@@ -262,16 +245,6 @@ const MovieDetail = () => {
                     onClick={handleToggleWishlist}
                   >
                     {isWish ? "위시리스트에서 제거" : "위시리스트에 추가"}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="share"
-                    onClick={() =>
-                      navigator.clipboard.writeText(window.location.href)
-                    }
-                  >
-                    공유
                   </button>
                 </li>
               </ul>

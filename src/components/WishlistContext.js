@@ -1,5 +1,10 @@
-// WishlistContext.js
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import {
   collection,
   getDocs,
@@ -19,69 +24,75 @@ export const useWishlist = () => {
 export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
 
-  // const fetchWishlist = async () => {
-  //   const user = auth.currentUser;
-  //   if (user) {
-  //     const wishlistRef = collection(db, "users", user.uid, "wishlist");
-  //     const wishlistSnapshot = await getDocs(wishlistRef);
-  //     const wishlistData = wishlistSnapshot.docs.map((doc) => ({
-  //       id: doc.id,
-  //       ...doc.data(),
-  //     }));
-  //     setWishlist(wishlistData);
-  //   }
-  // };
-  // let cachedWishlist = null;
-  let cachedWishlist = null;
-
-  const fetchWishlist = async () => {
-    if (cachedWishlist) {
-      return cachedWishlist;
-    }
+  const fetchWishlist = useCallback(async () => {
     const user = auth.currentUser;
     if (user) {
-      const wishlistRef = collection(db, "users", user.uid, "wishlist");
-      const wishlistSnapshot = await getDocs(wishlistRef);
-      cachedWishlist = wishlistSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        movieId: doc.data().movieId,
-        ...doc.data(),
-      }));
-      return cachedWishlist;
+      try {
+        const wishlistRef = collection(db, "users", user.uid, "wishlist");
+        const wishlistSnapshot = await getDocs(wishlistRef);
+        const wishlistData = wishlistSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          movieId: doc.data().movieId,
+          title: doc.data().title,
+          voteAverage: doc.data().voteAverage,
+          backdropPath: doc.data().backdropPath,
+        }));
+        setWishlist(wishlistData);
+      } catch (error) {}
+    } else {
+      setWishlist([]);
     }
-    return [];
-  };
+  }, []);
 
-  const addToWishlist = async (movieId, title, voteAverage, backdropPath) => {
-    const user = auth.currentUser;
-    if (user) {
-      const wishlistRef = collection(db, "users", user.uid, "wishlist");
-      await addDoc(wishlistRef, {
-        movieId,
-        title,
-        voteAverage,
-        backdropPath,
-      });
-      fetchWishlist();
-    }
-  };
+  const addToWishlist = useCallback(
+    async (movieId, title, voteAverage, backdropPath) => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const wishlistRef = collection(db, "users", user.uid, "wishlist");
+          const q = query(wishlistRef, where("movieId", "==", movieId));
+          const querySnapshot = await getDocs(q);
 
-  const removeFromWishlist = async (movieId) => {
-    const user = auth.currentUser;
-    if (user) {
-      const wishlistRef = collection(db, "users", user.uid, "wishlist");
-      const q = query(wishlistRef, where("movieId", "==", movieId));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach(async (doc) => {
-        await deleteDoc(doc.ref);
-      });
-      fetchWishlist();
-    }
-  };
+          if (querySnapshot.empty) {
+            await addDoc(wishlistRef, {
+              movieId,
+              title,
+              voteAverage,
+              backdropPath,
+            });
+            await fetchWishlist();
+          } else {
+          }
+        } catch (error) {}
+      }
+    },
+    [fetchWishlist]
+  );
+
+  const removeFromWishlist = useCallback(
+    async (movieId) => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const wishlistRef = collection(db, "users", user.uid, "wishlist");
+          const q = query(wishlistRef, where("movieId", "==", movieId));
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach(async (doc) => {
+            await deleteDoc(doc.ref);
+          });
+          await fetchWishlist();
+        } catch (error) {}
+      }
+    },
+    [fetchWishlist]
+  );
 
   useEffect(() => {
-    fetchWishlist();
-  }, []);
+    const unsubscribe = auth.onAuthStateChanged(() => {
+      fetchWishlist();
+    });
+    return () => unsubscribe(); // Unsubscribe 함수 호출
+  }, [fetchWishlist]);
 
   return (
     <WishlistContext.Provider
