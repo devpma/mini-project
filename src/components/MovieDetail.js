@@ -52,12 +52,15 @@ const MovieDetail = () => {
   }, [id]);
 
   useEffect(() => {
-    console.log("Wishlist state in MovieDetail:", wishlist); // 로그 추가
     const wishItem = wishlist.find((item) => item.movieId === parseInt(id));
     setIsWish(!!wishItem);
   }, [wishlist, id]);
 
   const handleToggleWishlist = useCallback(async () => {
+    if (!user) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
     if (isWish) {
       await removeFromWishlist(parseInt(id));
     } else {
@@ -73,6 +76,7 @@ const MovieDetail = () => {
     isWish,
     id,
     movieDetail,
+    user,
     addToWishlist,
     removeFromWishlist,
     fetchWishlist,
@@ -245,6 +249,11 @@ const MovieDetail = () => {
                     onClick={handleToggleWishlist}
                   >
                     {isWish ? "위시리스트에서 제거" : "위시리스트에 추가"}
+                  </button>
+                </li>
+                <li>
+                  <button className="share" onClick={copyLinkToClipboard}>
+                    공유
                   </button>
                 </li>
               </ul>

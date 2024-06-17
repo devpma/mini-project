@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { imgBasePath } from "./constant";
 import { useWishlist } from "./WishlistContext";
+import { useAuth } from "./AuthContext";
 import "./MovieCard.css";
 
 const MovieCard = ({ id, title, score, img, containerclass }) => {
+  const { user } = useAuth();
   const { wishlist, addToWishlist, removeFromWishlist, fetchWishlist } =
     useWishlist();
   const [loading, setLoading] = useState(false);
@@ -16,6 +18,10 @@ const MovieCard = ({ id, title, score, img, containerclass }) => {
   }, [wishlist, id]);
 
   const handleToggleWishlist = async () => {
+    if (!user) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
     setLoading(true);
     if (isWish) {
       await removeFromWishlist(id);
@@ -23,7 +29,6 @@ const MovieCard = ({ id, title, score, img, containerclass }) => {
       await addToWishlist(id, title, score, img);
     }
     await fetchWishlist();
-    window.dispatchEvent(new Event("wishlist-update"));
     setLoading(false);
   };
 
@@ -42,7 +47,7 @@ const MovieCard = ({ id, title, score, img, containerclass }) => {
         <button
           className={`wish ${loading ? "loading" : isWish ? "active" : ""}`}
           onClick={handleToggleWishlist}
-          disabled={loading}
+          disabled={loading} // Loading 중일 때 버튼 비활성화
         >
           {loading ? "⌛" : isWish ? "좋아요" : "추가"}
         </button>
