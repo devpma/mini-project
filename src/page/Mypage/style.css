@@ -1,0 +1,168 @@
+.mypage-wrap {
+  display: flex;
+}
+
+.myinfo-wrap {
+  width: 200px;
+  padding: 0 30px;
+  box-sizing: border-box;
+  color: #fff;
+}
+.myinfo-wrap .name {
+  text-align: center;
+  margin: 2rem 0;
+  display: block;
+}
+
+.mypage-menu-wrap {
+  padding: 50p 0;
+}
+.mypage-menu-wrap ul {
+}
+.mypage-menu-wrap ul li + li {
+  margin-top: 30px;
+}
+
+.mypage-menu-wrap ul li button {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  color: #fff;
+  position: relative;
+  text-align: left;
+  font-size: 1rem;
+  padding: 5px 0;
+  cursor: pointer;
+}
+.mypage-menu-wrap ul li button:after {
+  content: ">";
+  display: inline-block;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+.mypage-menu-wrap ul li button:hover:after {
+  right: 10px;
+}
+
+.myinfo-wrap + div {
+  flex: 1;
+}
+.mypage-wrap h1 {
+  text-align: left;
+  color: #fff;
+  border-bottom: 1px solid #919090;
+  padding-bottom: 30px;
+}
+.mypage-wrap .content > div {
+  text-align: left;
+  margin: 0 50px;
+  color: #fff;
+  background: #4f4d4d;
+  padding: 30px;
+  border-radius: 10px;
+}
+.mypage-wrap {
+  margin: 50px auto;
+  min-height: calc(100vh - 84.5px);
+}
+.wishlist-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.wishlist-wrap h1 {
+}
+.Userinfo-wrap {
+}
+.userinfo-box {
+  margin: 30px 0;
+}
+.userinfo-box .title,
+.userinfo-box .cont {
+  display: inline-block;
+}
+.userinfo-box .title {
+  width: 150px;
+}
+
+.userinfo-box .cont {
+  width: calc(100% - 150px);
+}
+.wishlist-wrap .list-wrap {
+  margin: 30px 0;
+}
+
+.Myreview-box {
+}
+
+.Myreview-box li:nth-of-type(1) {
+  margin-top: 30px;
+}
+.Myreview-box li {
+  border-bottom: 1px solid #999;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+.Myreview-box li .title {
+  padding-top: 0;
+  font-weight: 900;
+}
+.Myreview-box li p {
+  font-size: 14px;
+}
+.Myreview-box li .date {
+  color: #bebebe;
+  margin-top: 4px;
+}
+
+.faq {
+  margin: 30px 0;
+}
+
+.faq li {
+  background: #919090;
+  border-radius: 20px;
+  padding: 0 30px;
+  margin-bottom: 30px;
+}
+
+.faq .q-box,
+.faq .a-box {
+  padding: 20px 0;
+  position: relative;
+}
+.faq .q-box:after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  right: 0;
+  top: 20px;
+  background: url("/public/images/icon-faq.png") no-repeat 50%;
+  width: 24px;
+  height: 24px;
+  background-size: cover;
+  transition: all 0.2s;
+}
+.faq .active .q-box:after {
+  transform: rotate(180deg);
+}
+.faq .q-box {
+  cursor: pointer;
+}
+.faq .a-box {
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+@media screen and (max-width: 768px) {
+  .wishlist-wrap h1 {
+    margin: 0 20px;
+    font-size: 1.5rem;
+  }
+}

@@ -1,54 +1,69 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db, auth } from "../../firebase";
-import "./style.css";
-import { useNavigate } from "react-router-dom";
-import { imgBasePath } from "../../components/constant"; // 절대 경로로 수정
+import { useEffect, useState } from "react";
+import { imgBasePath } from "../../components/constant";
+import { getAuth } from "firebase/auth";
+import { app, db } from "../../firebase";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { useAuth } from "../../components/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-
-  const fetchWishlist = useCallback(async () => {
-    const user = auth.currentUser;
-    if (user) {
-      try {
-        const wishlistRef = collection(db, "users", user.uid, "wishlist");
-        const wishlistSnapshot = await getDocs(wishlistRef);
-        const wishlistData = wishlistSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          movieId: doc.data().movieId,
-          title: doc.data().title,
-          voteAverage: doc.data().voteAverage,
-          backdropPath: doc.data().backdropPath,
-        }));
-        setWishlistItems(wishlistData);
-      } catch (error) {
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      setLoading(false);
-    }
-  }, []);
+  const { user } = useAuth(); // useAuth 훅에서 가져온 user 객체
 
   useEffect(() => {
-    fetchWishlist();
+    console.log("User:", user); // user 객체 로그 출력
+
+    const fetchWishlist = async () => {
+      const auth = getAuth(app);
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        try {
+          const wishlistRef = collection(
+            db,
+            "users",
+            currentUser.uid,
+            "wishlist"
+          );
+          const wishlistSnapshot = await getDocs(wishlistRef);
+          const wishlistData = wishlistSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            movieId: doc.data().movieId,
+            title: doc.data().title,
+            voteAverage: doc.data().voteAverage,
+            backdropPath: doc.data().backdropPath,
+          }));
+          setWishlistItems(wishlistData);
+        } catch (error) {
+          console.error("Error fetching wishlist:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchWishlist();
+    }
+
     const handleWishlistUpdate = () => {
       fetchWishlist();
     };
+
     window.addEventListener("wishlist-update", handleWishlistUpdate);
     return () => {
       window.removeEventListener("wishlist-update", handleWishlistUpdate);
     };
-  }, [fetchWishlist]);
+  }, [user]);
 
   const removeFromWishlist = async (itemId) => {
-    const user = auth.currentUser;
-    if (user) {
+    const auth = getAuth(app);
+    const currentUser = auth.currentUser;
+    if (currentUser) {
       try {
-        const itemDoc = doc(db, "users", user.uid, "wishlist", itemId);
+        const itemDoc = doc(db, "users", currentUser.uid, "wishlist", itemId);
         await deleteDoc(itemDoc);
         setWishlistItems((prevItems) =>
           prevItems.filter((item) => item.id !== itemId)
@@ -62,7 +77,7 @@ const Wishlist = () => {
 
   return (
     <div className="wishlist-wrap">
-      <h1>MYPAGE</h1>
+      <h1>WISHLIST</h1>
       {loading ? (
         <div className="loading">
           <span className="loader"></span>
@@ -83,7 +98,7 @@ const Wishlist = () => {
                   <li key={item.id} className="list-box">
                     <div
                       className={`img ${!imageUrl ? "empty" : ""}`}
-                      onClick={() => navigate(`/${item.movieId}`)}
+                      onClick={() => Navigate(`/${item.movieId}`)}
                     >
                       {imageUrl ? (
                         <img src={imageUrl} alt={item.title} />
@@ -109,5 +124,4 @@ const Wishlist = () => {
     </div>
   );
 };
-
 export default Wishlist;

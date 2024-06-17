@@ -133,7 +133,7 @@ const NavLogin = ({ user, spliceUserEmail, handleLogout }) => {
   return (
     <>
       <p className="user-info">
-        <Link to="/wishlist">
+        <Link to="/mypage">
           {user.photoURL ? (
             <img src={user.photoURL} alt="profile img" />
           ) : (

@@ -33,6 +33,39 @@ const MovieDetail = () => {
 
   const { wishlist, fetchWishlist, addToWishlist, removeFromWishlist } =
     useWishlist();
+  const handleOnReview = async (event) => {
+    event.preventDefault();
+    if (!user) {
+      alert("로그인 후 리뷰를 작성할 수 있습니다.");
+      return;
+    }
+
+    try {
+      if (editingReviewId) {
+        const docRef = doc(db, "reviews", editingReviewId);
+        await updateDoc(docRef, {
+          text: review,
+          timestamp: new Date(),
+        });
+        setReview("");
+        setEditingReviewId(null);
+      } else {
+        await addDoc(collection(db, "reviews"), {
+          movieId: id,
+          movieTitle: movieDetail.title, // movieTitle 필드 추가
+          text: review,
+          userId: user.uid,
+          userName: user.email,
+          userPhoto: user.photoURL || "/images/icon-user.png",
+          timestamp: new Date(),
+        });
+        setReview("");
+      }
+      fetchReviews();
+    } catch (error) {
+      console.error("Error adding or updating review:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchMovieDetail = async () => {
@@ -94,6 +127,7 @@ const MovieDetail = () => {
         id: doc.id,
         ...doc.data(),
       }));
+      console.log("Fetched reviews: ", reviewsData); // 디버깅을 위한 로그
       setReviews(reviewsData);
     } catch (error) {
       console.error("Error fetching reviews:", error);
@@ -103,39 +137,6 @@ const MovieDetail = () => {
   useEffect(() => {
     fetchReviews();
   }, [fetchReviews]);
-
-  const handleOnReview = async (event) => {
-    event.preventDefault();
-    if (!user) {
-      alert("로그인 후 리뷰를 작성할 수 있습니다.");
-      return;
-    }
-
-    try {
-      if (editingReviewId) {
-        const docRef = doc(db, "reviews", editingReviewId);
-        await updateDoc(docRef, {
-          text: review,
-          timestamp: new Date(),
-        });
-        setReview("");
-        setEditingReviewId(null);
-      } else {
-        await addDoc(collection(db, "reviews"), {
-          movieId: id,
-          text: review,
-          userId: user.uid,
-          userName: user.email,
-          userPhoto: user.photoURL || "/images/icon-user.png",
-          timestamp: new Date(),
-        });
-        setReview("");
-      }
-      fetchReviews();
-    } catch (error) {
-      console.error("Error adding or updating review:", error);
-    }
-  };
 
   const handleEditReview = (review) => {
     if (review.userId !== user.uid) {
