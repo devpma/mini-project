@@ -22,17 +22,18 @@ import { db } from "../firebase";
 
 const MovieDetail = () => {
   const { id } = useParams();
-  const [movieDetail, setMovieDetail] = useState(null);
   const { user } = useAuth();
-  const [review, setReview] = useState("");
-  const [reviews, setReviews] = useState([]);
-  const [showMore, setShowMore] = useState(false);
-  const [editingReviewId, setEditingReviewId] = useState(null);
-  const [currentTab, setCurrentTab] = useState(0);
-  const [isWish, setIsWish] = useState(false);
-
-  const { wishlist, fetchWishlist, addToWishlist, removeFromWishlist } =
+  const { wishlist, addToWishlist, removeFromWishlist, fetchWishlist } =
     useWishlist();
+  const [movieDetail, setMovieDetail] = useState(null);
+  const [isWish, setIsWish] = useState(false);
+  const [review, setReview] = useState("");
+  const [editingReviewId, setEditingReviewId] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [currentTab, setCurrentTab] = useState(0);
+  const [showMore, setShowMore] = useState(false);
+
+  // 리뷰 작성 핸들러
   const handleOnReview = async (event) => {
     event.preventDefault();
     if (!user) {
@@ -52,7 +53,7 @@ const MovieDetail = () => {
       } else {
         await addDoc(collection(db, "reviews"), {
           movieId: id,
-          movieTitle: movieDetail.title, // movieTitle 필드 추가
+          movieTitle: movieDetail.title,
           text: review,
           userId: user.uid,
           userName: user.email,
@@ -63,10 +64,11 @@ const MovieDetail = () => {
       }
       fetchReviews();
     } catch (error) {
-      console.error("Error adding or updating review:", error);
+      console.error("리뷰 추가 또는 업데이트 중 오류 발생:", error);
     }
   };
 
+  // 영화 상세 정보를 가져오는 useEffect
   useEffect(() => {
     const fetchMovieDetail = async () => {
       try {
@@ -77,18 +79,20 @@ const MovieDetail = () => {
         const data = await response.json();
         setMovieDetail(data);
       } catch (error) {
-        console.error("Error fetching movie details:", error);
+        console.error("영화 세부 정보를 가져오는 중 오류 발생:", error);
       }
     };
 
     fetchMovieDetail();
   }, [id]);
 
+  // 위시리스트 상태를 업데이트하는 useEffect
   useEffect(() => {
     const wishItem = wishlist.find((item) => item.movieId === parseInt(id));
     setIsWish(!!wishItem);
   }, [wishlist, id]);
 
+  // 위시리스트 토글 핸들러
   const handleToggleWishlist = useCallback(async () => {
     if (!user) {
       alert("로그인이 필요합니다.");
@@ -115,6 +119,7 @@ const MovieDetail = () => {
     fetchWishlist,
   ]);
 
+  // 리뷰 목록을 가져오는 함수
   const fetchReviews = useCallback(async () => {
     try {
       const reviewsQuery = query(
@@ -127,17 +132,19 @@ const MovieDetail = () => {
         id: doc.id,
         ...doc.data(),
       }));
-      console.log("Fetched reviews: ", reviewsData); // 디버깅을 위한 로그
+      console.log("가져온 리뷰: ", reviewsData);
       setReviews(reviewsData);
     } catch (error) {
-      console.error("Error fetching reviews:", error);
+      console.error("리뷰를 가져오는 중 오류 발생:", error);
     }
   }, [id]);
 
+  // 리뷰 목록을 가져오는 useEffect
   useEffect(() => {
     fetchReviews();
   }, [fetchReviews]);
 
+  // 리뷰 수정 핸들러
   const handleEditReview = (review) => {
     if (review.userId !== user.uid) {
       alert("본인만 리뷰를 수정할 수 있습니다.");
@@ -147,6 +154,7 @@ const MovieDetail = () => {
     setEditingReviewId(review.id);
   };
 
+  // 리뷰 삭제 핸들러
   const handleDeleteReview = async (reviewId) => {
     if (!user) {
       alert("로그인 후 리뷰를 삭제할 수 있습니다.");
@@ -157,10 +165,11 @@ const MovieDetail = () => {
       await deleteDoc(doc(db, "reviews", reviewId));
       setReviews(reviews.filter((review) => review.id !== reviewId));
     } catch (error) {
-      console.error("Error deleting review:", error);
+      console.error("리뷰 삭제 중 오류 발생:", error);
     }
   };
 
+  // 링크를 클립보드에 복사하는 함수
   const copyLinkToClipboard = () => {
     const url = window.location.href;
     navigator.clipboard
@@ -169,7 +178,7 @@ const MovieDetail = () => {
         alert("링크가 복사되었습니다.");
       })
       .catch((err) => {
-        console.error("Failed to copy link: ", err);
+        console.error("링크 복사 실패: ", err);
       });
   };
 
